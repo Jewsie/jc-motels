@@ -1,13 +1,15 @@
 Config = Config or {}
 
+Config.UseTarget = false -- Whether you wanna use a menu or target
+
 Config.Motels = {
-    ['marathon-hotel'] = { -- The unique name of the motel, must fit one of the categories for motel rooms!
-        label = 'Marathon Ave Hotel', -- The name of the motel
-        coords = vector3(-1477.08, -674.35, 29.04) -- Location of the reception/lobby and motel blip!
+    ['marathon-hotel'] = {
+        label = 'Marathon Ave Hotel',
+        coords = vector3(-1477.08, -674.35, 29.04)
     }
 }
 
-Config.MotelRooms = {
+Config.BeachMotels = {
     -- Marathon Hotel Rooms
     {
         label = 'Marathon Ave Hotel Room #1', -- The name of the hotel room
@@ -23,6 +25,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel', -- Category(Required to match with motels, must match a name for the motels!)
         locked = true, -- Whether the door starts locked or not!
         renter = nil, -- Leave this blank, will assign who's the renter!
+        minZ = 25,
+        maxZ = 31, -- Necessary if you have fx 2 story building for motel
+        debugPoly = true -- Box to see if the boxes/polyzones mash together
     },
     {
         label = 'Marathon Ave Hotel Room #2',
@@ -38,6 +43,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 25,
+        maxZ = 31,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #3',
@@ -53,6 +61,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 25,
+        maxZ = 31,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #4',
@@ -68,6 +79,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 25,
+        maxZ = 31,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #5',
@@ -83,6 +97,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 25,
+        maxZ = 31,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #6',
@@ -98,6 +115,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 25,
+        maxZ = 31,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #7',
@@ -113,6 +133,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 25,
+        maxZ = 31,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #8',
@@ -128,6 +151,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 25,
+        maxZ = 31,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #9',
@@ -143,6 +169,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 25,
+        maxZ = 31,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #10',
@@ -158,6 +187,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 25,
+        maxZ = 31,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #11',
@@ -173,6 +205,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 25,
+        maxZ = 31,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #12',
@@ -188,6 +223,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 25,
+        maxZ = 31,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #13',
@@ -203,6 +241,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 32,
+        maxZ = 35,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #14',
@@ -218,6 +259,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 32,
+        maxZ = 35,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #15',
@@ -233,6 +277,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 32,
+        maxZ = 35,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #16',
@@ -248,6 +295,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 32,
+        maxZ = 35,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #17',
@@ -263,6 +313,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 32,
+        maxZ = 35,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #18',
@@ -278,7 +331,10 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
-    },
+        minZ = 32,
+        maxZ = 35,
+        debugPoly = false
+    },    
     {
         label = 'Marathon Ave Hotel Room #19',
         room = 'mahr_19',
@@ -293,6 +349,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 32,
+        maxZ = 35,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #20',
@@ -308,6 +367,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 32,
+        maxZ = 35,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #21',
@@ -323,6 +385,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 32,
+        maxZ = 35,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #22',
@@ -338,6 +403,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 32,
+        maxZ = 35,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #23',
@@ -353,6 +421,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 32,
+        maxZ = 35,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #24',
@@ -368,6 +439,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 32,
+        maxZ = 35,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #25',
@@ -383,6 +457,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 32,
+        maxZ = 35,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #26',
@@ -398,6 +475,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 32,
+        maxZ = 35,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #25',
@@ -413,6 +493,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 32,
+        maxZ = 35,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #27',
@@ -428,6 +511,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 32,
+        maxZ = 35,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #28',
@@ -443,6 +529,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 32,
+        maxZ = 35,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #29',
@@ -458,6 +547,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 25,
+        maxZ = 31,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #30',
@@ -473,6 +565,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 25,
+        maxZ = 31,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #31',
@@ -488,6 +583,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 25,
+        maxZ = 31,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #32',
@@ -503,6 +601,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 25,
+        maxZ = 31,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #33',
@@ -518,6 +619,9 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 25,
+        maxZ = 31,
+        debugPoly = false,
     },
     {
         label = 'Marathon Ave Hotel Room #34',
@@ -533,5 +637,8 @@ Config.MotelRooms = {
         category = 'marathon-hotel',
         locked = true,
         renter = nil,
+        minZ = 25,
+        maxZ = 31,
+        debugPoly = false,
     },
 }
