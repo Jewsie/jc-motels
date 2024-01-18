@@ -12,6 +12,7 @@ To add this motel system add into your qb-core -> shared -> items.lua;
 
 Modify the config to your liking!
 
-Requirements:
+Requirements: 
 qb-core
+qb-target(Can be turned off in config)
 ox_lib
