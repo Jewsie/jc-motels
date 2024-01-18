@@ -1,6 +1,9 @@
 # jc-motels
  A simple motel system for QB-Core using ox_lib
 
+ As always, support can be found here!
+ https://discord.gg/bDWj7GrZf2
+
  Preview: 
 
 To add this motel system add into your qb-core -> shared -> items.lua;
