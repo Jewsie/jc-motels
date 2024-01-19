@@ -103,7 +103,7 @@ AddEventHandler('jc-motels:server:cancelRent', function(roomid, room)
     TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items['motel_key'], 'remove')
 end)
 
-RegisterServerEvent('jc-motels:server:extendRent')
+RegisterServerEvent('jc-motels:server:lostKeys')
 AddEventHandler('jc-motels:server:extendRent', function(room, label)
     local src = source
     local player = QBCore.Functions.GetPlayer(src)
