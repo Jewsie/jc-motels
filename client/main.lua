@@ -463,9 +463,11 @@ Citizen.CreateThread(function()
                 if IsControlJustPressed(0, 51) then
                     local PlayerData = QBCore.Functions.GetPlayerData()
                     local items = PlayerData.items
-                    
+                    local found = false
                     for _, item in pairs(items) do
                         if item.label == 'Motel Key' and item.info.room == door.room then
+                            found = true
+                            QBCore.Functions.Notify('You unlocked the door!', 'success', 3000)
                             RequestAnimDict("anim@heists@keycard@")
                             while not HasAnimDictLoaded("anim@heists@keycard@") do
                                 Wait(0)
@@ -480,9 +482,11 @@ Citizen.CreateThread(function()
                                 SetEntityCoords(doorObj, entityPos)
                                 SetEntityHeading(doorObj, entityHeading)
                             end
-                        else
-                            QBCore.Functions.Notify('You don\'t have the key for this door!', 'error', 3000)
+                             
                         end
+                    end
+                    if not found then
+                    QBCore.Functions.Notify('You don\'t have the key for this door!', 'error', 3000)
                     end
                 end
             end
