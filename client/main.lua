@@ -88,7 +88,7 @@ Citizen.CreateThread(function()
                                                                             title = 'Lost Key',
                                                                             description = 'Get a new key for your room!',
                                                                             onSelect = function()
-                                                                                TriggerServerEvent('jc-motels:server:extendRent', motel.roomid, motel.room)
+                                                                                TriggerServerEvent('jc-motels:server:lostKeys', motel.roomid, motel.room)
                                                                             end
                                                                         },
                                                                         {
