@@ -85,10 +85,32 @@ Citizen.CreateThread(function()
                                                                     title = 'Manage Hotel Room',
                                                                     options = {
                                                                         {
+                                                                            title = 'Duplicate Key',
+                                                                            description = 'Duplicate your key to give to friends!',
+                                                                            onSelect = function()
+                                                                                TriggerServerEvent('jc-motels:server:duplicateKey', motel.roomid, motel.room)
+                                                                            end
+                                                                        },
+                                                                        {
                                                                             title = 'Lost Key',
                                                                             description = 'Get a new key for your room!',
                                                                             onSelect = function()
-                                                                                TriggerServerEvent('jc-motels:server:lostKeys', motel.roomid, motel.room)
+                                                                                local PlayerData = QBCore.Functions.GetPlayerData()
+                                                                                local items = PlayerData.items
+                                                                                local foundMatch = false
+                                                                                
+                                                                                for _, k in pairs(items) do
+                                                                                    if k.name == 'motel_key' and k.info.room == motel.roomid then
+                                                                                        foundMatch = true
+                                                                                        break
+                                                                                    end
+                                                                                end
+
+                                                                                if foundMatch then
+                                                                                    QBCore.Functions.Notify('What are you talking about?? The key is on you...', 'error', 3000)
+                                                                                else
+                                                                                    TriggerServerEvent('jc-motels:server:lostKeys', motel.roomid, motel.room)
+                                                                                end
                                                                             end
                                                                         },
                                                                         {

@@ -56,7 +56,7 @@ AddEventHandler('jc-motels:server:buyRoom', function(room)
                         info.room = room.room
                 
                         player.Functions.AddItem('motel_key', 1, nil, info)
-                        TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items['motel_key'], 'add')
+                        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['motel_key'], 'add')
                     end)
                 end
             else
@@ -70,7 +70,7 @@ AddEventHandler('jc-motels:server:buyRoom', function(room)
                     info.room = room.room
             
                     player.Functions.AddItem('motel_key', 1, nil, info)
-                    TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items['motel_key'], 'add')
+                    TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['motel_key'], 'add')
                 end)
             end
         end)
@@ -100,18 +100,93 @@ AddEventHandler('jc-motels:server:cancelRent', function(roomid, room)
     QBCore.Functions.Notify(src, 'You have cancelled your rent!')
 
     player.Functions.RemoveItem('motel_key', 1, nil, info)
-    TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items['motel_key'], 'remove')
+    TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['motel_key'], 'remove')
 end)
 
 RegisterServerEvent('jc-motels:server:lostKeys')
-AddEventHandler('jc-motels:server:extendRent', function(room, label)
+AddEventHandler('jc-motels:server:lostKeys', function(room, label)
     local src = source
     local player = QBCore.Functions.GetPlayer(src)
 
+    MySQL.query('SELECT `citizenid`, `inventory` FROM `players`', {}, function(response)
+        if response then
+            for i = 1, #response do
+                local row = response[i]
+                local citizenid = row.citizenid
+                local inventory = json.decode(row.inventory)
+
+                local found = false
+                for j, item in pairs(inventory) do
+                    if item.info.room == room then
+                        table.remove(inventory, j)
+                        found = true
+                    end
+                end
+
+                if found then
+                    local players = QBCore.Functions.GetQBPlayers()
+                    for _, v in pairs(players) do
+                        local items = v.PlayerData.items
+
+                        for _, inv in pairs(items) do
+                            if inv.name == 'motel_key' and inv.info.room == room then
+                                player.Functions.RemoveItem('motel_key', 1, nil, inv.info)
+                            end
+                        end
+                    end
+
+                    MySQL.execute('UPDATE `players` SET `inventory` = @inventory WHERE `citizenid` = @citizenid', {
+                        ['@inventory'] = json.encode(inventory),
+                        ['@citizenid'] = citizenid
+                    })
+                end
+            end
+        end
+    end)
+
+    MySQL.query('SELECT `stash`, `items` FROM `stashitems`', {}, function(response)
+        if response then
+            for i = 1, #response do
+                local row = response[i]
+                local stash = row.stash
+                local items = json.decode(row.items)
+
+                local found = false
+                for j, item in pairs(items) do
+                    if item.info.room == room then
+                        table.remove(items, j)
+                        found = true
+                    end
+                end
+
+                if found then
+                    MySQL.execute('UPDATE `stashitems` SET `items` = ? WHERE `stash` = ?', {
+                        json.encode(items),
+                        stash
+                    })
+                end
+            end
+        end
+    end)
+
+    Wait(500)
     player.Functions.RemoveMoney('cash', 100)
     local info = {}
     info.label = label
     info.room = room
     player.Functions.AddItem('motel_key', 1, nil, info)
-    TriggerClientEvent('inventory:client:ItemBox', source, QBCore.Shared.Items['motel_key'], 'add')
+    TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['motel_key'], 'add')
+end)
+
+RegisterServerEvent('jc-motels:server:duplicateKey')
+AddEventHandler('jc-motels:server:duplicateKey', function(room, label)
+    local src = source
+    local player = QBCore.Functions.GetPlayer(src)
+
+    player.Functions.RemoveMoney('cash', 50)
+    local info = {}
+    info.label = label
+    info.room = room
+    player.Functions.AddItem('motel_key', 1, nil, info)
+    TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['motel_key'], 'add')
 end)
