@@ -75,7 +75,6 @@ Citizen.CreateThread(function()
                                                 local motels = data
 
                                                 for _, motel in pairs(motels) do
-                                                    print(motel.citizenid)
                                                     if PlayerData.citizenid == motel.citizenid then
                                                         tableData[#tableData + 1] = {
                                                             title = motel.room,
@@ -227,7 +226,6 @@ Citizen.CreateThread(function()
 
                                         if motels then
                                             for _, motel in pairs(motels) do
-                                                print(motel.citizenid)
                                                 if PlayerData.citizenid == motel.citizenid then
                                                     tableData[#tableData + 1] = {
                                                         title = motel.room,
@@ -374,8 +372,6 @@ Citizen.CreateThread(function()
             FreezeEntityPosition(doorObj, true)
         end
 
-        print(doors.room, doorLocked)
-
         if Config.UseTarget then
             exports['qb-target']:AddCircleZone(doors.room, vector3(coords.x, coords.y, coords.z), 1.5, {
                 name = doors.room,
@@ -389,8 +385,6 @@ Citizen.CreateThread(function()
                         action = function()
                             local PlayerData = QBCore.Functions.GetPlayerData()
                             local items = PlayerData.items
-
-                            print(doorObj, doors.room)
                             
                             for _, item in pairs(items) do
                                 if item.label == 'Motel Key' and item.info.room == doors.room then
@@ -403,6 +397,7 @@ Citizen.CreateThread(function()
                                     if doorLocked then
                                         FreezeEntityPosition(doorObj, false)
                                         doorLocked = false
+                                        break
                                         return
                                     end
 
@@ -509,13 +504,11 @@ Citizen.CreateThread(function()
             
             doorZone:onPlayerInOut(function(isPointInside, _, _)
                 if isPointInside then
-                    print('Motel room: ' .. doors.room)
                     exports['qb-core']:DrawText('Press ~E~ to unlock door', 'right')
                     inZone = true
                 else
                     inZone = false
                     exports['qb-core']:HideText()
-                    print('Exited 1')
                 end
             end)
 
