@@ -370,9 +370,11 @@ Citizen.CreateThread(function()
             doorObj = GetClosestObjectOfType(doors.doorCoords, 2.0, doors.doorHash, false, false, false)
             entityPos = GetEntityCoords(doorObj)
             entityHeading = GetEntityHeading(doorObj)
-
+    
             FreezeEntityPosition(doorObj, true)
         end
+
+        print(doors.room, doorLocked)
 
         if Config.UseTarget then
             exports['qb-target']:AddCircleZone(doors.room, vector3(coords.x, coords.y, coords.z), 1.5, {
@@ -387,6 +389,8 @@ Citizen.CreateThread(function()
                         action = function()
                             local PlayerData = QBCore.Functions.GetPlayerData()
                             local items = PlayerData.items
+
+                            print(doorObj, doors.room)
                             
                             for _, item in pairs(items) do
                                 if item.label == 'Motel Key' and item.info.room == doors.room then
@@ -395,14 +399,18 @@ Citizen.CreateThread(function()
                                         Wait(0)
                                     end
                                     TaskPlayAnim(PlayerPedId(), "anim@heists@keycard@", "exit", 8.0, 1.0, -1, 48, 0, 0, 0, 0)
+
                                     if doorLocked then
                                         FreezeEntityPosition(doorObj, false)
                                         doorLocked = false
-                                    else
+                                        return
+                                    end
+
+                                    if not doorLocked then
                                         FreezeEntityPosition(doorObj, true)
-                                        doorLocked = true
                                         SetEntityCoords(doorObj, entityPos)
                                         SetEntityHeading(doorObj, entityHeading)
+                                        doorLocked = true
                                     end
                                 else
                                     if not notify_triggered then
@@ -475,11 +483,9 @@ Citizen.CreateThread(function()
                 if IsControlJustPressed(0, 51) then
                     local PlayerData = QBCore.Functions.GetPlayerData()
                     local items = PlayerData.items
-                    local found = false
+                    
                     for _, item in pairs(items) do
                         if item.label == 'Motel Key' and item.info.room == door.room then
-                            found = true
-                            QBCore.Functions.Notify('You unlocked the door!', 'success', 3000)
                             RequestAnimDict("anim@heists@keycard@")
                             while not HasAnimDictLoaded("anim@heists@keycard@") do
                                 Wait(0)
@@ -494,11 +500,9 @@ Citizen.CreateThread(function()
                                 SetEntityCoords(doorObj, entityPos)
                                 SetEntityHeading(doorObj, entityHeading)
                             end
-                             
+                        else
+                            QBCore.Functions.Notify('You don\'t have the key for this door!', 'error', 3000)
                         end
-                    end
-                    if not found then
-                    QBCore.Functions.Notify('You don\'t have the key for this door!', 'error', 3000)
                     end
                 end
             end

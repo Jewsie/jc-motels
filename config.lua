@@ -1,6 +1,6 @@
 Config = Config or {}
 
-Config.UseTarget = false -- Whether you wanna use a menu or target
+Config.UseTarget = true -- Whether you wanna use a menu or target
 
 Config.Motels = {
     ['marathon-hotel'] = {
@@ -18,10 +18,10 @@ Config.BeachMotels = {
         slots = 10, -- How many slots the stash has!
         weight = 35000, -- How much weight the stash has!
         doorCoords = vector3(-1494.44, -668.33, 29.28), -- Where the door is placed!
-        targetCoords = vector3(-1493.59, -668.28, 29.03), -- Where the target to lock and unlock the door is!
+        targetCoords = vector3(-1493.64, -668.22, 29.03), -- Where the target to lock and unlock the door is!
         doorHash = -2123441472, -- The hash of the door!
-        storage = vector3(-1497.89, -668.72, 29.03), -- Stash/Storage location
-        wardrobe = vector3(-1495.86, -670.87, 29.03), -- Wardrobe Location
+        storage = vector3(-1497.94, -668.75, 29.03), -- Stash/Storage location
+        wardrobe = vector3(-1495.74, -670.71, 29.03), -- Wardrobe Location
         category = 'marathon-hotel', -- Category(Required to match with motels, must match a name for the motels!)
         locked = true, -- Whether the door starts locked or not!
         renter = nil, -- Leave this blank, will assign who's the renter!
@@ -233,11 +233,11 @@ Config.BeachMotels = {
         price = 225,
         slots = 10,
         weight = 35000,
-        doorCoords = vector3(-1494.45, -668.33, 33.63),
-        targetCoords = vector3(-1493.69, -668.16, 33.38),
+        doorCoords = vector3(-1490.66, -671.45, 33.64),
+        targetCoords = vector3(-1489.98, -671.5, 33.38),
         doorHash = -2123441472,
-        storage = vector3(-1497.92, -668.9, 33.38),
-        wardrobe = vector3(-1495.78, -670.76, 33.38),
+        storage = vector3(-1493.84, -671.85, 33.39),
+        wardrobe = vector3(-1492.1, -674.01, 33.39),
         category = 'marathon-hotel',
         locked = true,
         renter = nil,

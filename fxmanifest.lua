@@ -15,7 +15,7 @@ server_scripts {
     'server/*.lua'
 }
 
-client_scripts {
+client_script {
     '@PolyZone/client.lua',
 	'@PolyZone/BoxZone.lua',
 	'@PolyZone/ComboZone.lua',
