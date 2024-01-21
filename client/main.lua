@@ -413,7 +413,7 @@ Citizen.CreateThread(function()
                             local items = PlayerData.items
                             
                             for _, item in pairs(items) do
-                                if item.label == 'Motel Key' and item.info.room == doors.room then
+                                if item.name == 'motel_key' and item.info.room == doors.room then
                                     RequestAnimDict("anim@heists@keycard@")
                                     while not HasAnimDictLoaded("anim@heists@keycard@") do
                                         Wait(0)
