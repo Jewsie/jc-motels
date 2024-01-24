@@ -1,6 +1,6 @@
 Config = Config or {}
 
-Config.UseTarget = false
+Config.UseTarget = true
 Config.Target = 'qb' -- Only qb works rn!! Currently support target system qb or ox only necessary if you even use target!
 Config.Inventory = 'qb' -- Only qb works rn!! Currently support inventory system qb or ox, qb SHOULD also support qs-inventory so if you use qs-inventory write qb!
 
