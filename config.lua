@@ -1,8 +1,8 @@
 Config = Config or {}
 
 Config.UseTarget = false
-Config.Target = 'qb' -- Currently support target system qb or ox only necessary if you even use target!
-Config.Inventory = 'qb' -- Currently support inventory system qb or ox, qb SHOULD also support qs-inventory so if you use qs-inventory write qb!
+Config.Target = 'qb' -- Only qb works rn!! Currently support target system qb or ox only necessary if you even use target!
+Config.Inventory = 'qb' -- Only qb works rn!! Currently support inventory system qb or ox, qb SHOULD also support qs-inventory so if you use qs-inventory write qb!
 
 Config.KeyName = 'motel_key' -- The name of the key item you use for the doors!
 
