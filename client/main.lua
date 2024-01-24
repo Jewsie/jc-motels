@@ -67,14 +67,11 @@ Citizen.CreateThread(function()
         if inZone then
             if inZone == 'door' then
                 if IsControlJustPressed(0, 51) then
-                    print('Pressed E')
-                    print(doorInfoLoop.entity)
                     TriggerServerEvent('jc-motels:server:checkDoorState', doorInfoLoop.entity, doorInfoLoop.room)
                 end
             elseif inZone == 'storage' then
                 local room = doorInfoLoop.room
                 if IsControlJustPressed(0, 51) then
-                    print('Pressed E')
                     TriggerServerEvent('inventory:server:OpenInventory', 'stash', room.room, {
                         maxweight = room.weight,
                         slots = room.slots,
@@ -83,7 +80,6 @@ Citizen.CreateThread(function()
                 end
             elseif inZone == 'wardrobe' then
                 if IsControlJustPressed(0, 51) then
-                    print('Pressed E')
                     TriggerServerEvent("InteractSound_SV:PlayOnSource", "Clothes1", 0.4)
                     TriggerEvent('qb-clothing:client:openOutfitMenu')
                 end
@@ -99,9 +95,11 @@ Citizen.CreateThread(function()
 
             if motels then
                 for _, motel in pairs(motels) do
-                    for _, m in pairs(Config.MotelRooms) do
-                        if m.room == motel.roomid and not m.renter then
-                            m.renter = motel.renter
+                    for key, motelRooms in pairs(Config.MotelRooms) do
+                        for k, m in pairs(motelRooms) do
+                            if m.room == motel.roomid and not m.renter then
+                                m.renter = motel.renter
+                            end
                         end
                     end
                 end
@@ -195,12 +193,14 @@ Citizen.CreateThread(function()
                                                                                         if motel.rentedTime > 84600 then
                                                                                             QBCore.Functions.Notify('You can only rent for a week at a time! You can first pay when there\'s 24 hours or less left!', 'error', 3000)
                                                                                         else
-                                                                                            for _, m in pairs(Config.MotelRooms) do
-                                                                                                if m.room == motel.roomid then
-                                                                                                    TriggerServerEvent('jc-motels:server:extendRent', motel.roomid, m.price)
-                                                                                                    break
-                                                                                                else
-                                                                                                    QBCore.Functions.Notify('Something went wrong.. Room not found!', 'error', 3000)
+                                                                                            for key, motelRools in pairs(Config.MotelRooms) do
+                                                                                                for k, m in pairs(motelRooms) do
+                                                                                                    if m.room == motel.roomid then
+                                                                                                        TriggerServerEvent('jc-motels:server:extendRent', motel.roomid, m.price)
+                                                                                                        break
+                                                                                                    else
+                                                                                                        QBCore.Functions.Notify('Something went wrong.. Room not found!', 'error', 3000)
+                                                                                                    end
                                                                                                 end
                                                                                             end
                                                                                         end
@@ -222,13 +222,15 @@ Citizen.CreateThread(function()
                                                                                         end
                                                                                         
                                                                                         if hasKey then
-                                                                                            for _, m in pairs(Config.MotelRooms) do
-                                                                                                if m.room == motel.roomid then
-                                                                                                    m.renter = nil
-                                                                                                    TriggerServerEvent('jc-motels:server:cancelRent', motel.roomid, motel.room_name)
-                                                                                                    break
-                                                                                                else
-                                                                                                    QBCore.Functions.Notify('Something went wrong.. Room not found!', 'error', 3000)
+                                                                                            for key, motelRooms in pairs(Config.MotelRooms) do
+                                                                                                for k, m in pairs(motelRooms) do
+                                                                                                    if m.room == motel.roomid then
+                                                                                                        m.renter = nil
+                                                                                                        TriggerServerEvent('jc-motels:server:cancelRent', motel.roomid, motel.room_name)
+                                                                                                        break
+                                                                                                    else
+                                                                                                        QBCore.Functions.Notify('Something went wrong.. Room not found!', 'error', 3000)
+                                                                                                    end
                                                                                                 end
                                                                                             end
                                                                                         else
@@ -265,20 +267,22 @@ Citizen.CreateThread(function()
                                                 checkMotels()
                                                 Wait(100)
                                 
-                                                for _, rooms in pairs(Config.MotelRooms) do
-                                                    if rooms.category == i and not rooms.renter then
-                                                        tableData[#tableData + 1] = {
-                                                            title = rooms.label,
-                                                            description = 'Price: $' .. rooms.price .. '\n Storage Space: ' .. rooms.slots,
-                                                            onSelect = function()
-                                                                if not boughtRoom then
-                                                                    TriggerServerEvent('jc-motels:server:buyRoom', rooms)
-                                                                    boughtRoom = true
-                                                                    Wait(1000)
-                                                                    boughtRoom = false
+                                                for key, motelRooms in pairs(Config.MotelRooms) do
+                                                    for k, rooms in pairs(motelRooms) do
+                                                        if i == key and not rooms.renter then
+                                                            tableData[#tableData + 1] = {
+                                                                title = rooms.label,
+                                                                description = 'Price: $' .. rooms.price .. '\n Storage Space: ' .. rooms.slots,
+                                                                onSelect = function()
+                                                                    if not boughtRoom then
+                                                                        TriggerServerEvent('jc-motels:server:buyRoom', rooms)
+                                                                        boughtRoom = true
+                                                                        Wait(1000)
+                                                                        boughtRoom = false
+                                                                    end
                                                                 end
-                                                            end
-                                                        }
+                                                            }
+                                                        end
                                                     end
                                                 end
                                 
@@ -464,7 +468,6 @@ Citizen.CreateThread(function()
 
         if LocalPlayer.state.isLoggedIn then
             isLoggedIn = true
-            print('Logged in!')
         end
     end
 
@@ -473,7 +476,6 @@ Citizen.CreateThread(function()
             local doorObj = GetClosestObjectOfType(rooms.doorCoords, 2.0, rooms.doorHash, false, false, false)
     
             if doorObj and doorObj ~= 0 then
-                -- print(rooms.room, doorObj)
                 if not IsDoorRegisteredWithSystem(doorObj) then
                     local objCoords = rooms.doorCoords
                     local objHeading = GetEntityHeading(doorObj)
@@ -638,7 +640,6 @@ AddEventHandler('onClientResourceStart', function(resourceName)
             local doorObj = GetClosestObjectOfType(rooms.doorCoords, 2.0, rooms.doorHash, false, false, false)
     
             if doorObj and doorObj ~= 0 then
-                -- print(rooms.room, doorObj)
                 if not IsDoorRegisteredWithSystem(doorObj) then
                     local objCoords = rooms.doorCoords
                     local objHeading = GetEntityHeading(doorObj)
