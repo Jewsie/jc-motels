@@ -1,11 +1,7 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
-Citizen.CreateThread(function()
-    while true do
-        Wait(1000)
-        MySQL.execute('UPDATE `motels` SET `rentedTime` = GREATEST(`rentedTime` - 1, 0) WHERE `rentedTime` > 0', {})
-    end
-end)
+local doorInfo = {}
+local locked = false
 
 QBCore.Functions.CreateCallback('getMotels', function(source, cb)
     local tableData = {}
@@ -27,6 +23,40 @@ QBCore.Functions.CreateCallback('getMotels', function(source, cb)
             cb(false)
         end
     end)
+end)
+
+Citizen.CreateThread(function()
+    while true do
+        Wait(1000)
+        MySQL.execute('UPDATE `motels` SET `rentedTime` = GREATEST(`rentedTime` - 1, 0) WHERE `rentedTime` > 0', {})
+    end
+end)
+
+RegisterCommand('GiveKey', function(source, args, rawCommand)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+
+    local info = {}
+    info.label = 'Motel Room #1'
+    info.room = 'mahr_1'
+
+    Player.Functions.AddItem(Config.KeyName, 1, nil, info)
+end)
+
+RegisterServerEvent('jc-motels:server:updateDoorState')
+AddEventHandler('jc-motels:server:updateDoorState', function(entity, state)
+    doorInfo[entity].locked = state
+end)
+
+RegisterServerEvent('jc-motels:server:checkDoorState')
+AddEventHandler('jc-motels:server:checkDoorState', function(entity, rooms)
+    local src = source
+
+    if not doorInfo[entity] then
+        doorInfo[entity] = {locked = rooms.locked}
+    end
+
+    TriggerClientEvent('jc-motels:client:updateDoorState', src, entity, rooms, doorInfo[entity].locked)
 end)
 
 RegisterServerEvent('jc-motels:server:buyRoom')
