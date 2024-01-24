@@ -195,7 +195,7 @@ Citizen.CreateThread(function()
                                                                                         if motel.rentedTime > 84600 then
                                                                                             QBCore.Functions.Notify('You can only rent for a week at a time! You can first pay when there\'s 24 hours or less left!', 'error', 3000)
                                                                                         else
-                                                                                            for _, m in pairs(Config.BeachMotels) do
+                                                                                            for _, m in pairs(Config.MotelRooms) do
                                                                                                 if m.room == motel.roomid then
                                                                                                     TriggerServerEvent('jc-motels:server:extendRent', motel.roomid, m.price)
                                                                                                     break
@@ -222,7 +222,7 @@ Citizen.CreateThread(function()
                                                                                         end
                                                                                         
                                                                                         if hasKey then
-                                                                                            for _, m in pairs(Config.BeachMotels) do
+                                                                                            for _, m in pairs(Config.MotelRooms) do
                                                                                                 if m.room == motel.roomid then
                                                                                                     m.renter = nil
                                                                                                     TriggerServerEvent('jc-motels:server:cancelRent', motel.roomid, motel.room_name)
@@ -265,7 +265,7 @@ Citizen.CreateThread(function()
                                                 checkMotels()
                                                 Wait(100)
                                 
-                                                for _, rooms in pairs(Config.BeachMotels) do
+                                                for _, rooms in pairs(Config.MotelRooms) do
                                                     if rooms.category == i and not rooms.renter then
                                                         tableData[#tableData + 1] = {
                                                             title = rooms.label,
@@ -352,7 +352,7 @@ Citizen.CreateThread(function()
                                                                             if motel.rentedTime > 84600 then
                                                                                 QBCore.Functions.Notify('You can only rent for a week at a time! You can first pay when there\'s 24 hours or less left!', 'error', 3000)
                                                                             else
-                                                                                for _, m in pairs(Config.BeachMotels) do
+                                                                                for _, m in pairs(Config.MotelRooms) do
                                                                                     if m.room == motel.roomid then
                                                                                         TriggerServerEvent('jc-motels:server:extendRent', motel.roomid, m.price)
                                                                                         break
@@ -380,7 +380,7 @@ Citizen.CreateThread(function()
                                                                             end
                                                                             
                                                                             if hasKey then
-                                                                                for _, m in pairs(Config.BeachMotels) do
+                                                                                for _, m in pairs(Config.MotelRooms) do
                                                                                     if m.room == motel.roomid then
                                                                                         m.renter = nil
                                                                                         TriggerServerEvent('jc-motels:server:cancelRent', motel.roomid, motel.room_name)
@@ -424,7 +424,7 @@ Citizen.CreateThread(function()
                                     checkMotels()
                                     Wait(100)
                     
-                                    for _, rooms in pairs(Config.BeachMotels) do
+                                    for _, rooms in pairs(Config.MotelRooms) do
                                         if rooms.category == i and not rooms.renter then
                                             tableData[#tableData + 1] = {
                                                 title = rooms.label,
