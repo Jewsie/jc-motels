@@ -463,7 +463,6 @@ Citizen.CreateThread(function()
 end)
 
 Citizen.CreateThread(function()
-
     while not isLoggedIn do
         Wait(1000)
 
@@ -472,7 +471,7 @@ Citizen.CreateThread(function()
         end
     end
 
-    Wait(10000)
+    Wait(5000)
     for i, motels in pairs(Config.MotelRooms) do
         for k, rooms in pairs(motels) do 
             local doorObj = GetClosestObjectOfType(rooms.doorCoords, 2.0, rooms.doorHash, false, false, false)
