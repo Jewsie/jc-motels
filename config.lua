@@ -1,24 +1,24 @@
 Config = Config or {}
 
 Config.UseTarget = true
-Config.Target = 'qb' -- Only qb works rn!! Currently support target system qb or ox only necessary if you even use target!
-Config.Inventory = 'qb' -- Only qb works rn!! Currently support inventory system qb or ox, qb SHOULD also support qs-inventory so if you use qs-inventory write qb!
+Config.Target = 'qb' -- Currently support target system qb or ox only necessary if you even use target!
+Config.Inventory = 'qb' -- Currently support inventory system qb or ox, qb SHOULD also support qs-inventory so if you use qs-inventory write qb!
 
 Config.KeyName = 'motel_key' -- The name of the key item you use for the doors!
 
 Config.Motels = {
-    ['marathon-hotel'] = {
-        label = 'Marathon Ave Hotel',
+    ['marathon-motel'] = {
+        label = 'Marathon Ave Motel',
         coords = vector3(-1477.08, -674.35, 29.04)
     }
 }
 
 Config.MotelRooms = {
-    ['marathan-motel'] = {
+    ['marathon-motel'] = {
         {
-            label = 'Marathon Ave Hotel Room #1', -- The name of the hotel room
+            label = 'Marathon Ave Motel Room #1', -- The name of the Motel room
             room = 'mahr_1', -- The id of the room, has to be unique!
-            price = 225, -- Price for the hotel room every week!
+            price = 225, -- Price for the Motel room every week!
             slots = 10, -- How many slots the stash has!
             weight = 35000, -- How much weight the stash has!
             doorCoords = vector3(-1494.44, -668.33, 29.28), -- Where the door is placed!
@@ -33,7 +33,7 @@ Config.MotelRooms = {
             debugPoly = true -- Box to see if the boxes/polyzones mash together
         },
         {
-            label = 'Marathon Ave Hotel Room #2',
+            label = 'Marathon Ave Motel Room #2',
             room = 'mahr_2',
             price = 225,
             slots = 10,
@@ -50,7 +50,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #3',
+            label = 'Marathon Ave Motel Room #3',
             room = 'mahr_3',
             price = 225,
             slots = 10,
@@ -67,7 +67,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #4',
+            label = 'Marathon Ave Motel Room #4',
             room = 'mahr_4',
             price = 225,
             slots = 10,
@@ -84,7 +84,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #5',
+            label = 'Marathon Ave Motel Room #5',
             room = 'mahr_5',
             price = 225,
             slots = 10,
@@ -101,7 +101,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #6',
+            label = 'Marathon Ave Motel Room #6',
             room = 'mahr_6',
             price = 225,
             slots = 10,
@@ -118,7 +118,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #7',
+            label = 'Marathon Ave Motel Room #7',
             room = 'mahr_7',
             price = 225,
             slots = 10,
@@ -135,7 +135,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #8',
+            label = 'Marathon Ave Motel Room #8',
             room = 'mahr_8',
             price = 225,
             slots = 10,
@@ -152,7 +152,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #9',
+            label = 'Marathon Ave Motel Room #9',
             room = 'mahr_9',
             price = 225,
             slots = 10,
@@ -169,7 +169,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #10',
+            label = 'Marathon Ave Motel Room #10',
             room = 'mahr_10',
             price = 225,
             slots = 10,
@@ -186,7 +186,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #11',
+            label = 'Marathon Ave Motel Room #11',
             room = 'mahr_11',
             price = 225,
             slots = 10,
@@ -203,7 +203,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #12',
+            label = 'Marathon Ave Motel Room #12',
             room = 'mahr_12',
             price = 225,
             slots = 10,
@@ -220,7 +220,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #13',
+            label = 'Marathon Ave Motel Room #13',
             room = 'mahr_13',
             price = 225,
             slots = 10,
@@ -237,7 +237,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #14',
+            label = 'Marathon Ave Motel Room #14',
             room = 'mahr_14',
             price = 225,
             slots = 10,
@@ -254,7 +254,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #15',
+            label = 'Marathon Ave Motel Room #15',
             room = 'mahr_15',
             price = 225,
             slots = 10,
@@ -271,7 +271,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #16',
+            label = 'Marathon Ave Motel Room #16',
             room = 'mahr_16',
             price = 225,
             slots = 10,
@@ -288,7 +288,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #17',
+            label = 'Marathon Ave Motel Room #17',
             room = 'mahr_17',
             price = 225,
             slots = 10,
@@ -305,7 +305,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #18',
+            label = 'Marathon Ave Motel Room #18',
             room = 'mahr_18',
             price = 225,
             slots = 10,
@@ -322,7 +322,7 @@ Config.MotelRooms = {
             debugPoly = false
         },    
         {
-            label = 'Marathon Ave Hotel Room #19',
+            label = 'Marathon Ave Motel Room #19',
             room = 'mahr_19',
             price = 225,
             slots = 10,
@@ -339,7 +339,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #20',
+            label = 'Marathon Ave Motel Room #20',
             room = 'mahr_20',
             price = 225,
             slots = 10,
@@ -356,7 +356,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #21',
+            label = 'Marathon Ave Motel Room #21',
             room = 'mahr_21',
             price = 225,
             slots = 10,
@@ -373,7 +373,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #22',
+            label = 'Marathon Ave Motel Room #22',
             room = 'mahr_22',
             price = 225,
             slots = 10,
@@ -390,7 +390,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #23',
+            label = 'Marathon Ave Motel Room #23',
             room = 'mahr_23',
             price = 225,
             slots = 10,
@@ -407,7 +407,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #24',
+            label = 'Marathon Ave Motel Room #24',
             room = 'mahr_24',
             price = 225,
             slots = 10,
@@ -424,7 +424,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #25',
+            label = 'Marathon Ave Motel Room #25',
             room = 'mahr_25',
             price = 225,
             slots = 10,
@@ -441,7 +441,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #26',
+            label = 'Marathon Ave Motel Room #26',
             room = 'mahr_26',
             price = 225,
             slots = 10,
@@ -458,7 +458,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #25',
+            label = 'Marathon Ave Motel Room #25',
             room = 'mahr_25',
             price = 225,
             slots = 10,
@@ -475,7 +475,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #27',
+            label = 'Marathon Ave Motel Room #27',
             room = 'mahr_27',
             price = 225,
             slots = 10,
@@ -492,7 +492,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #28',
+            label = 'Marathon Ave Motel Room #28',
             room = 'mahr_28',
             price = 225,
             slots = 10,
@@ -509,7 +509,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #29',
+            label = 'Marathon Ave Motel Room #29',
             room = 'mahr_29',
             price = 225,
             slots = 10,
@@ -526,7 +526,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #30',
+            label = 'Marathon Ave Motel Room #30',
             room = 'mahr_30',
             price = 225,
             slots = 10,
@@ -543,7 +543,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #31',
+            label = 'Marathon Ave Motel Room #31',
             room = 'mahr_31',
             price = 225,
             slots = 10,
@@ -560,7 +560,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #32',
+            label = 'Marathon Ave Motel Room #32',
             room = 'mahr_32',
             price = 225,
             slots = 10,
@@ -577,7 +577,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #33',
+            label = 'Marathon Ave Motel Room #33',
             room = 'mahr_33',
             price = 225,
             slots = 10,
@@ -594,7 +594,7 @@ Config.MotelRooms = {
             debugPoly = false,
         },
         {
-            label = 'Marathon Ave Hotel Room #34',
+            label = 'Marathon Ave Motel Room #34',
             room = 'mahr_34',
             price = 225,
             slots = 10,
