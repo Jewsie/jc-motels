@@ -1,20 +1,19 @@
 Config = Config or {}
 
 Config.UseTarget = true
-Config.Target = 'qb' -- Currently support target system qb or ox only necessary if you even use target!
 Config.Inventory = 'qb' -- Currently support inventory system qb or ox, qb SHOULD also support qs-inventory so if you use qs-inventory write qb!
 
 Config.KeyName = 'motel_key' -- The name of the key item you use for the doors!
 
 Config.Motels = {
-    ['marathon-motel'] = {
+    ['marathon_motel'] = {
         label = 'Marathon Ave Motel',
         coords = vector3(-1477.08, -674.35, 29.04)
     }
 }
 
 Config.MotelRooms = {
-    ['marathon-motel'] = {
+    ['marathon_motel'] = {
         {
             label = 'Marathon Ave Motel Room #1', -- The name of the Motel room
             room = 'mahr_1', -- The id of the room, has to be unique!
