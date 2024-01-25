@@ -475,31 +475,36 @@ Citizen.CreateThread(function()
     for i, motels in pairs(Config.MotelRooms) do
         for k, rooms in pairs(motels) do 
             local doorObj = GetClosestObjectOfType(rooms.doorCoords, 2.0, rooms.doorHash, false, false, false)
-            print('Rooms: #' .. rooms.room, doorObj)
+            local door_netid = NetworkGetNetworkIdFromEntity(doorObj)
+            print('Rooms: #' .. rooms.room, door_netid)
     
-            if doorObj and doorObj ~= 0 then
-                if not IsDoorRegisteredWithSystem(doorObj) then
+            if door_netid and door_netid ~= 0 then
+                if not IsDoorRegisteredWithSystem(door_netid) then
                     local objCoords = rooms.doorCoords
-                    local objHeading = GetEntityHeading(doorObj)
+                    local objHeading = GetEntityHeading(door_netid)
                     
-                    AddDoorToSystem(doorObj, rooms.doorHash, objCoords.x, objCoords.y, objCoords.z, false, false, false)
+                    AddDoorToSystem(door_netid, rooms.doorHash, objCoords.x, objCoords.y, objCoords.z, false, false, false)
                     if rooms.locked then
-                        DoorSystemSetDoorState(doorObj, 4, false, false)
-                        DoorSystemSetDoorState(doorObj, 1, false, false)
+                        DoorSystemSetDoorState(door_netid, 4, false, false)
+                        DoorSystemSetDoorState(door_netid, 1, false, false)
                     else
-                        DoorSystemSetDoorState(doorObj, 0, false, false)
+                        DoorSystemSetDoorState(door_netid, 0, false, false)
                     end
                 end
 
                 if Config.UseTarget then
                     if Config.Target == 'qb' then
-                        exports['qb-target']:AddTargetEntity(doorObj, {
+                        exports['qb-target']:AddCircleZone('room_' .. rooms.room, rooms.doorCoords, 1.5, {
+                            name = 'room_' .. rooms.room,
+                            useZ = true,
+                            debugPoly = false,
+                        }, {
                             options = {
                                 {
                                     label = 'Lock/Unlock door',
                                     icon = 'fas fa-key',
-                                    action = function(entity) 
-                                        TriggerServerEvent('jc-motels:server:checkDoorState', entity, rooms)
+                                    action = function()
+                                        TriggerServerEvent('jc-motels:server:checkDoorState', door_netid, rooms)
                                     end
                                 }
                             },
@@ -555,7 +560,7 @@ Citizen.CreateThread(function()
                         -- Logic for using ox_target
                     end
                 else
-                    local doorCoords = GetEntityCoords(doorObj)
+                    local doorCoords = GetEntityCoords(door_netid)
                     local doorZone = BoxZone:Create(doorCoords, 2.5, 2.5, {
                         name=i,
                         heading=0,
@@ -584,7 +589,7 @@ Citizen.CreateThread(function()
                         if isPointInside then
                             exports['qb-core']:DrawText('Press ~E~ to unlock door', 'right')
                             doorInfoLoop = {
-                                entity = doorObj,
+                                entity = door_netid,
                                 room = rooms
                             }
                             inZone = 'door'
@@ -598,7 +603,7 @@ Citizen.CreateThread(function()
                         if isPointInside then
                             exports['qb-core']:DrawText('Press ~E~ to open stash', 'right')
                             doorInfoLoop = {
-                                entity = doorObj,
+                                entity = door_netid,
                                 room = rooms
                             }
                             inZone = 'storage'
@@ -612,7 +617,7 @@ Citizen.CreateThread(function()
                         if isPointInside then
                             exports['qb-core']:DrawText('Press ~E~ to open wardrobe', 'right')
                             doorInfoLoop = {
-                                entity = doorObj,
+                                entity = door_netid,
                                 room = rooms
                             }
                             inZone = 'wardrobe'
@@ -634,27 +639,4 @@ AddEventHandler('jc-motels:client:updateDoorState', function(doorObj, doorData, 
     end
 
     lockUnlockDoor(doorObj, doorData)
-end)
-
-AddEventHandler('onClientResourceStart', function(resourceName)
-    for i, motels in pairs(Config.MotelRooms) do
-        for k, rooms in pairs(motels) do 
-            local doorObj = GetClosestObjectOfType(rooms.doorCoords, 2.0, rooms.doorHash, false, false, false)
-    
-            if doorObj and doorObj ~= 0 then
-                if not IsDoorRegisteredWithSystem(doorObj) then
-                    local objCoords = rooms.doorCoords
-                    local objHeading = GetEntityHeading(doorObj)
-                    
-                    AddDoorToSystem(doorObj, rooms.doorHash, objCoords.x, objCoords.y, objCoords.z, false, false, false)
-                    if rooms.locked then
-                        DoorSystemSetDoorState(doorObj, 4, false, false)
-                        DoorSystemSetDoorState(doorObj, 1, false, false)
-                    else
-                        DoorSystemSetDoorState(doorObj, 0, false, false)
-                    end
-                end
-            end
-        end
-    end
 end)
