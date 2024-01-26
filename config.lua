@@ -1,5 +1,6 @@
 Config = Config or {}
 
+Config.RentingBills = true -- Set this to true if you want motel owners to pay their due every repay interval(By default every 7 days matching with the amount of renters they have and a little less so if they had 3 renters with motel room prices of 225 they would be charged 775 / 2.5)
 Config.UseTarget = true
 Config.Inventory = 'qb' -- Currently support inventory system qb or ox, qb SHOULD also support qs-inventory so if you use qs-inventory write qb!
 
@@ -7,8 +8,9 @@ Config.KeyName = 'motel_key' -- The name of the key item you use for the doors!
 
 Config.Motels = {
     ['marathon_motel'] = {
-        label = 'Marathon Ave Motel',
-        coords = vector3(-1477.08, -674.35, 29.04)
+        label = 'Marathon Ave Motel', -- The name of the motel!
+        coords = vector3(-1477.08, -674.35, 29.04), -- The location of where the motel will be!
+        buyPrice = 100000 -- If you want people to be able to own this motel, leave as nil if unbuyable!
     }
 }
 
