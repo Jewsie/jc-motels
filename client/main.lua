@@ -469,101 +469,113 @@ Citizen.CreateThread(function()
 
     Wait(5000)
     for i, motels in pairs(Config.MotelRooms) do
-        for k, rooms in pairs(motels) do 
-            local doorObj = GetClosestObjectOfType(rooms.doorCoords, 2.0, rooms.doorHash, false, false, false)
-            local door_netid = NetworkGetNetworkIdFromEntity(doorObj)
-            print('Rooms: #' .. rooms.room, door_netid)
-    
-            if door_netid and door_netid ~= 0 then
-                if not IsDoorRegisteredWithSystem(door_netid) then
-                    local objCoords = rooms.doorCoords
-                    local objHeading = GetEntityHeading(door_netid)
-                    
-                    AddDoorToSystem(door_netid, rooms.doorHash, objCoords.x, objCoords.y, objCoords.z, false, false, false)
-                    if rooms.locked then
-                        DoorSystemSetDoorState(door_netid, 4, false, false)
-                        DoorSystemSetDoorState(door_netid, 1, false, false)
-                    else
-                        DoorSystemSetDoorState(door_netid, 0, false, false)
+        for k, rooms in pairs(motels) do
+            if rooms.multipleDoors then
+                for _, doors in pairs(rooms.doorCoords) do
+                    local doorObj = GetClosestObjectOfType(doors.coords, 1.5, doors.doorHash, false, false, false)
+                    local door_netid = NetworkGetNetworkIdFromEntity(doorObj)
+                    print('Rooms: #' .. rooms.room, door_netid)
+
+                    if door_netid and door_netid ~= 0 then
+                        if not IsDoorRegisteredWithSystem(door_netid) then
+                            local objCoords = rooms.doorCoords
+                            local objHeading = GetEntityHeading(door_netid)
+                            
+                            AddDoorToSystem(door_netid, rooms.doorHash, objCoords.x, objCoords.y, objCoords.z, false, false, false)
+                            if rooms.locked then
+                                DoorSystemSetDoorState(door_netid, 4, false, false)
+                                DoorSystemSetDoorState(door_netid, 1, false, false)
+                            else
+                                DoorSystemSetDoorState(door_netid, 0, false, false)
+                            end
+                        end
+                    end
+
+                    if Config.UseTarget then
+                        if Config.Target == 'qb' then
+                            exports['qb-target']:AddCircleZone('room_' .. rooms.room, rooms.doorCoords, 1.5, {
+                                name = 'room_' .. rooms.room,
+                                useZ = true,
+                                debugPoly = false,
+                            }, {
+                                options = {
+                                    {
+                                        label = 'Lock/Unlock door',
+                                        icon = 'fas fa-key',
+                                        action = function()
+                                            TriggerServerEvent('jc-motels:server:checkDoorState', door_netid, rooms)
+                                        end
+                                    }
+                                },
+                                distance = 2.5
+                            })
+                        end
                     end
                 end
 
                 if Config.UseTarget then
-                    if Config.Target == 'qb' then
-                        exports['qb-target']:AddCircleZone('room_' .. rooms.room, rooms.doorCoords, 1.5, {
-                            name = 'room_' .. rooms.room,
-                            useZ = true,
-                            debugPoly = false,
-                        }, {
-                            options = {
-                                {
-                                    label = 'Lock/Unlock door',
-                                    icon = 'fas fa-key',
-                                    action = function()
-                                        TriggerServerEvent('jc-motels:server:checkDoorState', door_netid, rooms)
+                    local s_coords = rooms.storage
+                    exports['qb-target']:AddCircleZone('stash_' .. rooms.room, vector3(s_coords.x, s_coords.y, s_coords.z), 1.5, {
+                        name = 'stash_' .. rooms.room,
+                        useZ = true,
+                        debugPoly = false,
+                    }, {
+                        options = {
+                            {
+                                label = 'Open Stash',
+                                icon = 'fas fa-box',
+                                action = function()
+                                    if Config.Inventory == 'qb' then
+                                        TriggerServerEvent('inventory:server:OpenInventory', 'stash', rooms.room, {
+                                            maxweight = rooms.weight,
+                                            slots = rooms.slots,
+                                        })
+                                        TriggerEvent('inventory:client:SetCurrentStash', rooms.room)
+                                    elseif Config.Inventory == 'ox' then
+                                        -- Add the logic of ox_inventory
                                     end
-                                }
+                                end
                             },
-                            distance = 2.5
-                        })
-
-                        local s_coords = rooms.storage
-                        exports['qb-target']:AddCircleZone('stash_' .. rooms.room, vector3(s_coords.x, s_coords.y, s_coords.z), 1.5, {
-                            name = 'stash_' .. rooms.room,
-                            useZ = true,
-                            debugPoly = false,
-                        }, {
-                            options = {
-                                {
-                                    label = 'Open Stash',
-                                    icon = 'fas fa-box',
-                                    action = function()
-                                        if Config.Inventory == 'qb' then
-                                            TriggerServerEvent('inventory:server:OpenInventory', 'stash', rooms.room, {
-                                                maxweight = rooms.weight,
-                                                slots = rooms.slots,
-                                            })
-                                            TriggerEvent('inventory:client:SetCurrentStash', rooms.room)
-                                        elseif Config.Inventory == 'ox' then
-                                            -- Add the logic of ox_inventory
-                                        end
-                                    end
-                                },
-                            },
-                            distance = 2.5
-                        })
-
-                        local w_coords = rooms.wardrobe
-                        exports['qb-target']:AddCircleZone('wardrobe_' .. rooms.room, vector3(w_coords.x, w_coords.y, w_coords.z), 1.5, {
-                            name = 'wardrobe_' .. rooms.room,
-                            useZ = true,
-                            debugPoly = false,
-                        }, {
-                            options = {
-                                {
-                                    label = 'Open Wardrobe',
-                                    icon = 'fas fa-box',
-                                    action = function()
-                                        TriggerServerEvent("InteractSound_SV:PlayOnSource", "Clothes1", 0.4)
-                                        TriggerEvent('qb-clothing:client:openOutfitMenu')
-                                    end
-                                },
-                            },
-                            distance = 2.5
-                        })
-
-                    elseif Config.Target == 'ox' then
-                        -- Logic for using ox_target
-                    end
-                else
-                    local doorCoords = GetEntityCoords(door_netid)
-                    local doorZone = BoxZone:Create(doorCoords, 2.5, 2.5, {
-                        name=i,
-                        heading=0,
-                        minZ=rooms.minZ,
-                        maxZ=rooms.maxZ,
-                        debugPoly=true,
+                        },
+                        distance = 2.5
                     })
+
+                    local w_coords = rooms.wardrobe
+                    exports['qb-target']:AddCircleZone('wardrobe_' .. rooms.room, vector3(w_coords.x, w_coords.y, w_coords.z), 1.5, {
+                        name = 'wardrobe_' .. rooms.room,
+                        useZ = true,
+                        debugPoly = false,
+                    }, {
+                        options = {
+                            {
+                                label = 'Open Wardrobe',
+                                icon = 'fas fa-box',
+                                action = function()
+                                    TriggerServerEvent("InteractSound_SV:PlayOnSource", "Clothes1", 0.4)
+                                    TriggerEvent('qb-clothing:client:openOutfitMenu')
+                                end
+                            },
+                        },
+                        distance = 2.5
+                    })
+                else
+                    local doorObj = nil
+                    local door_netid = nil
+
+                    for _, doors in pairs(rooms.doorCoords) do
+                        doorObj = GetClosestObjectOfType(doors.coords, 1.5, doors.doorHash, false, false, false)
+                        door_netid = NetworkGetNetworkIdFromEntity(doorObj)
+                        print('Rooms: #' .. rooms.room, door_netid)
+
+                        local doorCoords = GetEntityCoords(door_netid)
+                        local doorZone = BoxZone:Create(doorCoords, 2.5, 2.5, {
+                            name=i,
+                            heading=0,
+                            minZ=rooms.minZ,
+                            maxZ=rooms.maxZ,
+                            debugPoly=true,
+                        })
+                    end
 
                     local storage = BoxZone:Create(rooms.storage, 1, 1, {
                         name=i,
@@ -622,6 +634,156 @@ Citizen.CreateThread(function()
                             exports['qb-core']:HideText()
                         end
                     end)
+                end
+            else
+                local doorObj = GetClosestObjectOfType(rooms.doorCoords, 2.0, rooms.doorHash, false, false, false)
+                local door_netid = NetworkGetNetworkIdFromEntity(doorObj)
+                print('Rooms: #' .. rooms.room, door_netid)
+        
+                if door_netid and door_netid ~= 0 then
+                    if not IsDoorRegisteredWithSystem(door_netid) then
+                        local objCoords = rooms.doorCoords
+                        local objHeading = GetEntityHeading(door_netid)
+                        
+                        AddDoorToSystem(door_netid, rooms.doorHash, objCoords.x, objCoords.y, objCoords.z, false, false, false)
+                        if rooms.locked then
+                            DoorSystemSetDoorState(door_netid, 4, false, false)
+                            DoorSystemSetDoorState(door_netid, 1, false, false)
+                        else
+                            DoorSystemSetDoorState(door_netid, 0, false, false)
+                        end
+                    end
+    
+                    if Config.UseTarget then
+                        exports['qb-target']:AddCircleZone('room_' .. rooms.room, rooms.doorCoords, 1.5, {
+                            name = 'room_' .. rooms.room,
+                            useZ = true,
+                            debugPoly = false,
+                        }, {
+                            options = {
+                                {
+                                    label = 'Lock/Unlock door',
+                                    icon = 'fas fa-key',
+                                    action = function()
+                                        TriggerServerEvent('jc-motels:server:checkDoorState', door_netid, rooms)
+                                    end
+                                }
+                            },
+                            distance = 2.5
+                        })
+    
+                        local s_coords = rooms.storage
+                        exports['qb-target']:AddCircleZone('stash_' .. rooms.room, vector3(s_coords.x, s_coords.y, s_coords.z), 1.5, {
+                            name = 'stash_' .. rooms.room,
+                            useZ = true,
+                            debugPoly = false,
+                        }, {
+                            options = {
+                                {
+                                    label = 'Open Stash',
+                                    icon = 'fas fa-box',
+                                    action = function()
+                                        if Config.Inventory == 'qb' then
+                                            TriggerServerEvent('inventory:server:OpenInventory', 'stash', rooms.room, {
+                                                maxweight = rooms.weight,
+                                                slots = rooms.slots,
+                                            })
+                                            TriggerEvent('inventory:client:SetCurrentStash', rooms.room)
+                                        elseif Config.Inventory == 'ox' then
+                                            -- Add the logic of ox_inventory
+                                        end
+                                    end
+                                },
+                            },
+                            distance = 2.5
+                        })
+    
+                        local w_coords = rooms.wardrobe
+                        exports['qb-target']:AddCircleZone('wardrobe_' .. rooms.room, vector3(w_coords.x, w_coords.y, w_coords.z), 1.5, {
+                            name = 'wardrobe_' .. rooms.room,
+                            useZ = true,
+                            debugPoly = false,
+                        }, {
+                            options = {
+                                {
+                                    label = 'Open Wardrobe',
+                                    icon = 'fas fa-box',
+                                    action = function()
+                                        TriggerServerEvent("InteractSound_SV:PlayOnSource", "Clothes1", 0.4)
+                                        TriggerEvent('qb-clothing:client:openOutfitMenu')
+                                    end
+                                },
+                            },
+                            distance = 2.5
+                        })
+                    else
+                        local doorCoords = GetEntityCoords(door_netid)
+                        local doorZone = BoxZone:Create(doorCoords, 2.5, 2.5, {
+                            name=i,
+                            heading=0,
+                            minZ=rooms.minZ,
+                            maxZ=rooms.maxZ,
+                            debugPoly=true,
+                        })
+    
+                        local storage = BoxZone:Create(rooms.storage, 1, 1, {
+                            name=i,
+                            heading=0,
+                            minZ=rooms.minZ,
+                            maxZ=rooms.maxZ,
+                            debugPoly=true,
+                        })
+    
+                        local wardrobe = BoxZone:Create(rooms.wardrobe, 1, 1, {
+                            name=i,
+                            heading=0,
+                            minZ=rooms.minZ,
+                            maxZ=rooms.maxZ,
+                            debugPoly=true,
+                        })
+                        
+                        doorZone:onPlayerInOut(function(isPointInside)
+                            if isPointInside then
+                                exports['qb-core']:DrawText('Press ~E~ to unlock door', 'right')
+                                doorInfoLoop = {
+                                    entity = door_netid,
+                                    room = rooms
+                                }
+                                inZone = 'door'
+                            else
+                                inZone = false
+                                exports['qb-core']:HideText()
+                            end
+                        end)
+    
+                        storage:onPlayerInOut(function(isPointInside)
+                            if isPointInside then
+                                exports['qb-core']:DrawText('Press ~E~ to open stash', 'right')
+                                doorInfoLoop = {
+                                    entity = door_netid,
+                                    room = rooms
+                                }
+                                inZone = 'storage'
+                            else
+                                inZone = nil
+                                exports['qb-core']:HideText()
+                            end
+                        end)
+    
+                        wardrobe:onPlayerInOut(function(isPointInside)
+                            if isPointInside then
+                                exports['qb-core']:DrawText('Press ~E~ to open wardrobe', 'right')
+                                doorInfoLoop = {
+                                    entity = door_netid,
+                                    room = rooms
+                                }
+                                inZone = 'wardrobe'
+                            else
+                                inZone = nil
+                                exports['qb-core']:HideText()
+                            end
+                        end)
+                    end
                 end
             end
         end 
