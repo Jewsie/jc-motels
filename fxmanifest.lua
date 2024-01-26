@@ -3,7 +3,7 @@ game 'gta5'
 
 author 'jackp'
 description ''
-version '1.0.1'
+version '1.2.0'
 
 shared_scripts {
     '@ox_lib/init.lua',
