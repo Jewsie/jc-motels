@@ -131,171 +131,725 @@ Citizen.CreateThread(function()
                         label = 'Motel Lobby',
                         icon = 'fas fa-lobby',
                         action = function()
-                            lib.registerContext({
-                                id = i,
-                                title = motel.label,
-                                options = {
-                                    {
-                                        title = 'Rented Rooms',
-                                        description = 'Watch your rented rooms!',
-                                        onSelect = function()
-                                            local PlayerData = QBCore.Functions.GetPlayerData()
-                                            local tableData = {}
+                            if motel.buyPrice then
+                                local PlayerData = QBCore.Functions.GetPlayerData()
+                                local roomData = {}
+                                local hasFound = false
+                                local owner = nil
+                                local funds = 0
+                                
+                                QBCore.Functions.TriggerCallback('ownedMotels', function(ownedMotels)
+                                    local ownedMotels = ownedMotels
 
-                                            QBCore.Functions.TriggerCallback('getMotels', function(data)
-                                                local motels = data
+                                    if ownedMotels then
+                                        for _, om in pairs(ownedMotels) do
+                                            if om.motel == i then
+                                                local omrooms = om.rooms
+                                                hasFound = true
+                                                owner = om.owner
+                                                funds = om.funds
+                                                roomData = omnrooms
+                                                break
+                                            end
+                                        end
+                                    end
 
-                                                if motels then
-                                                    for _, motel in pairs(motels) do
-                                                        if PlayerData.citizenid == motel.citizenid then
-                                                            tableData[#tableData + 1] = {
-                                                                title = motel.room,
-                                                                description = 'Rent ends in: ' .. formatTime(motel.rentedTime),
-                                                                onSelect = function()
-                                                                    lib.registerContext({
-                                                                        id = 'manage_' .. motel.roomid,
-                                                                        title = 'Manage Hotel Room',
-                                                                        options = {
-                                                                            {
-                                                                                title = 'Duplicate Key',
-                                                                                description = 'Duplicate your key to give to friends!',
-                                                                                onSelect = function()
-                                                                                    TriggerServerEvent('jc-motels:server:duplicateKey', motel.roomid, motel.room)
-                                                                                end
-                                                                            },
-                                                                            {
-                                                                                title = 'Lost Key',
-                                                                                description = 'Get a new key for your room!',
-                                                                                onSelect = function()
-                                                                                    local PlayerData = QBCore.Functions.GetPlayerData()
-                                                                                    local items = PlayerData.items
-                                                                                    local foundMatch = false
-                                                                                    
-                                                                                    for _, k in pairs(items) do
-                                                                                        if k.name == 'motel_key' and k.info.room == motel.roomid then
-                                                                                            foundMatch = true
-                                                                                            break
-                                                                                        end
-                                                                                    end
-
-                                                                                    if foundMatch then
-                                                                                        QBCore.Functions.Notify('What are you talking about?? The key is on you...', 'error', 3000)
-                                                                                    else
-                                                                                        TriggerServerEvent('jc-motels:server:lostKeys', motel.roomid, motel.room)
-                                                                                    end
-                                                                                end
-                                                                            },
-                                                                            {
-                                                                                title = 'Extend Rent',
-                                                                                description = 'Pay to rent for another week!',
-                                                                                onSelect = function()
-                                                                                    if motel.rentedTime > 84600 then
-                                                                                        QBCore.Functions.Notify('You can only rent for a week at a time! You can first pay when there\'s 24 hours or less left!', 'error', 3000)
-                                                                                    else
-                                                                                        for key, motelRools in pairs(Config.MotelRooms) do
-                                                                                            for k, m in pairs(motelRooms) do
-                                                                                                if m.room == motel.roomid then
-                                                                                                    TriggerServerEvent('jc-motels:server:extendRent', motel.roomid, m.price)
-                                                                                                    break
+                                    if not hasFound then
+                                        lib.registerContext({
+                                            id = i,
+                                            title = motel.label,
+                                            options = {
+                                                {
+                                                    title = 'Rented Rooms',
+                                                    description = 'Watch your rented rooms!',
+                                                    onSelect = function()
+                                                        local PlayerData = QBCore.Functions.GetPlayerData()
+                                                        local tableData = {}
+                                        
+                                                        QBCore.Functions.TriggerCallback('getMotels', function(data)
+                                                            local motels = data
+                                        
+                                                            if motels then
+                                                                for _, motel in pairs(motels) do
+                                                                    if PlayerData.citizenid == motel.citizenid then
+                                                                        tableData[#tableData + 1] = {
+                                                                            title = motel.room,
+                                                                            description = 'Rent ends in: ' .. formatTime(motel.rentedTime),
+                                                                            onSelect = function()
+                                                                                lib.registerContext({
+                                                                                    id = 'manage_' .. motel.roomid,
+                                                                                    title = 'Manage Hotel Room',
+                                                                                    options = {
+                                                                                        {
+                                                                                            title = 'Duplicate Key',
+                                                                                            description = 'Duplicate your key to give to friends!',
+                                                                                            onSelect = function()
+                                                                                                TriggerServerEvent('jc-motels:server:duplicateKey', motel.roomid, motel.room)
+                                                                                            end
+                                                                                        },
+                                                                                        {
+                                                                                            title = 'Lost Key',
+                                                                                            description = 'Get a new key for your room!',
+                                                                                            onSelect = function()
+                                                                                                local PlayerData = QBCore.Functions.GetPlayerData()
+                                                                                                local items = PlayerData.items
+                                                                                                local foundMatch = false
+                                                                                                
+                                                                                                for _, k in pairs(items) do
+                                                                                                    if k.name == 'motel_key' and k.info.room == motel.roomid then
+                                                                                                        foundMatch = true
+                                                                                                        break
+                                                                                                    end
+                                                                                                end
+                                        
+                                                                                                if foundMatch then
+                                                                                                    QBCore.Functions.Notify('What are you talking about?? The key is on you...', 'error', 3000)
                                                                                                 else
-                                                                                                    QBCore.Functions.Notify('Something went wrong.. Room not found!', 'error', 3000)
+                                                                                                    TriggerServerEvent('jc-motels:server:lostKeys', motel.roomid, motel.room)
                                                                                                 end
                                                                                             end
-                                                                                        end
-                                                                                    end
-                                                                                end
-                                                                            },
-                                                                            {
-                                                                                title = 'End Rent',
-                                                                                description = 'Stop renting the motel room!',
-                                                                                onSelect = function()
-                                                                                    local PlayerData = QBCore.Functions.GetPlayerData()
-                                                                                    local items = PlayerData.items
-                                                                                    local hasKey = false
-
-                                                                                    for _, item in pairs(items) do
-                                                                                        if item.info.room == motel.roomid then
-                                                                                            hasKey = true
-                                                                                            break
-                                                                                        end
-                                                                                    end
-                                                                                    
-                                                                                    if hasKey then
-                                                                                        for key, motelRooms in pairs(Config.MotelRooms) do
-                                                                                            for k, m in pairs(motelRooms) do
-                                                                                                if m.room == motel.roomid then
-                                                                                                    m.renter = nil
-                                                                                                    TriggerServerEvent('jc-motels:server:cancelRent', motel.roomid, motel.room_name)
-                                                                                                    break
+                                                                                        },
+                                                                                        {
+                                                                                            title = 'Extend Rent',
+                                                                                            description = 'Pay to rent for another week!',
+                                                                                            onSelect = function()
+                                                                                                if motel.rentedTime > 84600 then
+                                                                                                    QBCore.Functions.Notify('You can only rent for a week at a time! You can first pay when there\'s 24 hours or less left!', 'error', 3000)
                                                                                                 else
-                                                                                                    QBCore.Functions.Notify('Something went wrong.. Room not found!', 'error', 3000)
+                                                                                                    for key, motelRools in pairs(Config.MotelRooms) do
+                                                                                                        for k, m in pairs(motelRooms) do
+                                                                                                            if m.room == motel.roomid then
+                                                                                                                TriggerServerEvent('jc-motels:server:extendRent', motel.roomid, m.price)
+                                                                                                                break
+                                                                                                            else
+                                                                                                                QBCore.Functions.Notify('Something went wrong.. Room not found!', 'error', 3000)
+                                                                                                            end
+                                                                                                        end
+                                                                                                    end
                                                                                                 end
                                                                                             end
-                                                                                        end
-                                                                                    else
-                                                                                        QBCore.Functions.Notify('You need your key so you can deliver it!', 'error', 3000)
-                                                                                    end
+                                                                                        },
+                                                                                        {
+                                                                                            title = 'End Rent',
+                                                                                            description = 'Stop renting the motel room!',
+                                                                                            onSelect = function()
+                                                                                                local PlayerData = QBCore.Functions.GetPlayerData()
+                                                                                                local items = PlayerData.items
+                                                                                                local hasKey = false
+                                        
+                                                                                                for _, item in pairs(items) do
+                                                                                                    if item.info.room == motel.roomid then
+                                                                                                        hasKey = true
+                                                                                                        break
+                                                                                                    end
+                                                                                                end
+                                                                                                
+                                                                                                if hasKey then
+                                                                                                    for key, motelRooms in pairs(Config.MotelRooms) do
+                                                                                                        for k, m in pairs(motelRooms) do
+                                                                                                            if m.room == motel.roomid then
+                                                                                                                m.renter = nil
+                                                                                                                TriggerServerEvent('jc-motels:server:cancelRent', motel.roomid, motel.room_name)
+                                                                                                                break
+                                                                                                            else
+                                                                                                                QBCore.Functions.Notify('Something went wrong.. Room not found!', 'error', 3000)
+                                                                                                            end
+                                                                                                        end
+                                                                                                    end
+                                                                                                else
+                                                                                                    QBCore.Functions.Notify('You need your key so you can deliver it!', 'error', 3000)
+                                                                                                end
+                                                                                            end
+                                                                                        }
+                                                                                    }
+                                                                                })
+                                                                                lib.showContext('manage_' .. motel.roomid)
+                                                                            end
+                                                                        }
+                                                                    end
+                                                                end
+                                        
+                                                                lib.registerContext({
+                                                                    id = 'rented_rooms',
+                                                                    title = 'Rented Rooms',
+                                                                    options = tableData
+                                                                })
+                                                                lib.showContext('rented_rooms')
+                                                            else
+                                                                QBCore.Functions.Notify('You don\'t have any rented rooms here!', 'error', 3000)
+                                                            end
+                                                        end)
+                                                    end
+                                                },
+                                                {
+                                                    title = 'Rent Room',
+                                                    description = 'Rent a room with weekly pay!',
+                                                    onSelect = function()
+                                                        local tableData = {}
+                                                        local boughtRoom = false
+                                                        checkMotels()
+                                                        Wait(100)
+                                        
+                                                        for key, motelRooms in pairs(Config.MotelRooms) do
+                                                            for k, rooms in pairs(motelRooms) do
+                                                                if i == key and not rooms.renter then
+                                                                    tableData[#tableData + 1] = {
+                                                                        title = rooms.label,
+                                                                        description = 'Price: $' .. rooms.price .. '\n Storage Space: ' .. rooms.slots,
+                                                                        onSelect = function()
+                                                                            if not boughtRoom then
+                                                                                TriggerServerEvent('jc-motels:server:buyRoom', rooms)
+                                                                                boughtRoom = true
+                                                                                Wait(1000)
+                                                                                boughtRoom = false
+                                                                            end
+                                                                        end
+                                                                    }
+                                                                end
+                                                            end
+                                                        end
+                                        
+                                                        lib.registerContext({
+                                                            id = 'rent_' .. i .. '_room',
+                                                            title = 'Rent Motel Room',
+                                                            options = tableData
+                                                        })
+                                                        lib.showContext('rent_' .. i .. '_room')
+                                                    end
+                                                },
+                                                {
+                                                    title = 'Buy Hotel',
+                                                    description = 'Buying Price: $' .. motel.buyPrice,
+                                                    onSelect = function()
+                                                        TriggerServerEvent('jc-motels:server:buymotel', i, motel)
+                                                    end
+                                                }
+                                            }
+                                        })
+                                        lib.showContext(i)
+                                    else
+                                        if owner == PlayerData.citizenid then
+                                            lib.registerContext({
+                                                id = i,
+                                                title = motel.label,
+                                                options = {
+                                                    {
+                                                        title = 'Manage Motel',
+                                                        description = 'Manage your motel!',
+                                                        onSelect = function()
+                                                            local motelDataTable = {}
+                                                            if Config.RentingBills then
+                                                                print('Room Data', roomData)
+                                                                if roomData then
+                                                                    print('test')
+                                                                    print(roomData.count)
+                                                                    for _, rData in pairs(roomData) do
+                                                                        print('test2')
+                                                                        print('Value in roomData:', rData)
+                                                                    end
+                                                                end
+                                                            end                                                            
+                                                        end
+                                                    },
+                                                    {
+                                                        title = 'Rented Rooms',
+                                                        description = 'Watch your rented rooms!',
+                                                        onSelect = function()
+                                                            local PlayerData = QBCore.Functions.GetPlayerData()
+                                                            local tableData = {}
+                                            
+                                                            QBCore.Functions.TriggerCallback('getMotels', function(data)
+                                                                local motels = data
+                                            
+                                                                if motels then
+                                                                    for _, motel in pairs(motels) do
+                                                                        if PlayerData.citizenid == motel.citizenid then
+                                                                            tableData[#tableData + 1] = {
+                                                                                title = motel.room,
+                                                                                description = 'Rent ends in: ' .. formatTime(motel.rentedTime),
+                                                                                onSelect = function()
+                                                                                    lib.registerContext({
+                                                                                        id = 'manage_' .. motel.roomid,
+                                                                                        title = 'Manage Hotel Room',
+                                                                                        options = {
+                                                                                            {
+                                                                                                title = 'Duplicate Key',
+                                                                                                description = 'Duplicate your key to give to friends!',
+                                                                                                onSelect = function()
+                                                                                                    TriggerServerEvent('jc-motels:server:duplicateKey', motel.roomid, motel.room)
+                                                                                                end
+                                                                                            },
+                                                                                            {
+                                                                                                title = 'Lost Key',
+                                                                                                description = 'Get a new key for your room!',
+                                                                                                onSelect = function()
+                                                                                                    local PlayerData = QBCore.Functions.GetPlayerData()
+                                                                                                    local items = PlayerData.items
+                                                                                                    local foundMatch = false
+                                                                                                    
+                                                                                                    for _, k in pairs(items) do
+                                                                                                        if k.name == 'motel_key' and k.info.room == motel.roomid then
+                                                                                                            foundMatch = true
+                                                                                                            break
+                                                                                                        end
+                                                                                                    end
+                                            
+                                                                                                    if foundMatch then
+                                                                                                        QBCore.Functions.Notify('What are you talking about?? The key is on you...', 'error', 3000)
+                                                                                                    else
+                                                                                                        TriggerServerEvent('jc-motels:server:lostKeys', motel.roomid, motel.room)
+                                                                                                    end
+                                                                                                end
+                                                                                            },
+                                                                                            {
+                                                                                                title = 'Extend Rent',
+                                                                                                description = 'Pay to rent for another week!',
+                                                                                                onSelect = function()
+                                                                                                    if motel.rentedTime > 84600 then
+                                                                                                        QBCore.Functions.Notify('You can only rent for a week at a time! You can first pay when there\'s 24 hours or less left!', 'error', 3000)
+                                                                                                    else
+                                                                                                        for key, motelRools in pairs(Config.MotelRooms) do
+                                                                                                            for k, m in pairs(motelRooms) do
+                                                                                                                if m.room == motel.roomid then
+                                                                                                                    TriggerServerEvent('jc-motels:server:extendRent', motel.roomid, m.price)
+                                                                                                                    break
+                                                                                                                else
+                                                                                                                    QBCore.Functions.Notify('Something went wrong.. Room not found!', 'error', 3000)
+                                                                                                                end
+                                                                                                            end
+                                                                                                        end
+                                                                                                    end
+                                                                                                end
+                                                                                            },
+                                                                                            {
+                                                                                                title = 'End Rent',
+                                                                                                description = 'Stop renting the motel room!',
+                                                                                                onSelect = function()
+                                                                                                    local PlayerData = QBCore.Functions.GetPlayerData()
+                                                                                                    local items = PlayerData.items
+                                                                                                    local hasKey = false
+                                            
+                                                                                                    for _, item in pairs(items) do
+                                                                                                        if item.info.room == motel.roomid then
+                                                                                                            hasKey = true
+                                                                                                            break
+                                                                                                        end
+                                                                                                    end
+                                                                                                    
+                                                                                                    if hasKey then
+                                                                                                        for key, motelRooms in pairs(Config.MotelRooms) do
+                                                                                                            for k, m in pairs(motelRooms) do
+                                                                                                                if m.room == motel.roomid then
+                                                                                                                    m.renter = nil
+                                                                                                                    TriggerServerEvent('jc-motels:server:cancelRent', motel.roomid, motel.room_name)
+                                                                                                                    break
+                                                                                                                else
+                                                                                                                    QBCore.Functions.Notify('Something went wrong.. Room not found!', 'error', 3000)
+                                                                                                                end
+                                                                                                            end
+                                                                                                        end
+                                                                                                    else
+                                                                                                        QBCore.Functions.Notify('You need your key so you can deliver it!', 'error', 3000)
+                                                                                                    end
+                                                                                                end
+                                                                                            }
+                                                                                        }
+                                                                                    })
+                                                                                    lib.showContext('manage_' .. motel.roomid)
                                                                                 end
                                                                             }
-                                                                        }
+                                                                        end
+                                                                    end
+                                            
+                                                                    lib.registerContext({
+                                                                        id = 'rented_rooms',
+                                                                        title = 'Rented Rooms',
+                                                                        options = tableData
                                                                     })
-                                                                    lib.showContext('manage_' .. motel.roomid)
+                                                                    lib.showContext('rented_rooms')
+                                                                else
+                                                                    QBCore.Functions.Notify('You don\'t have any rented rooms here!', 'error', 3000)
+                                                                end
+                                                            end)
+                                                        end
+                                                    },
+                                                    {
+                                                        title = 'Rent Room',
+                                                        description = 'Rent a room with weekly pay!',
+                                                        onSelect = function()
+                                                            local tableData = {}
+                                                            local boughtRoom = false
+                                                            checkMotels()
+                                                            Wait(100)
+                                            
+                                                            for key, motelRooms in pairs(Config.MotelRooms) do
+                                                                for k, rooms in pairs(motelRooms) do
+                                                                    if i == key and not rooms.renter then
+                                                                        tableData[#tableData + 1] = {
+                                                                            title = rooms.label,
+                                                                            description = 'Price: $' .. rooms.price .. '\n Storage Space: ' .. rooms.slots,
+                                                                            onSelect = function()
+                                                                                if not boughtRoom then
+                                                                                    TriggerServerEvent('jc-motels:server:buyRoom', rooms)
+                                                                                    boughtRoom = true
+                                                                                    Wait(1000)
+                                                                                    boughtRoom = false
+                                                                                end
+                                                                            end
+                                                                        }
+                                                                    end
+                                                                end
+                                                            end
+                                            
+                                                            lib.registerContext({
+                                                                id = 'rent_' .. i .. '_room',
+                                                                title = 'Rent Motel Room',
+                                                                options = tableData
+                                                            })
+                                                            lib.showContext('rent_' .. i .. '_room')
+                                                        end
+                                                    },
+                                                }
+                                            })
+                                            lib.showContext(i)
+                                            hasFound = false
+                                        else
+                                            lib.registerContext({
+                                                id = i,
+                                                title = motel.label,
+                                                options = {
+                                                    {
+                                                        title = 'Rented Rooms',
+                                                        description = 'Watch your rented rooms!',
+                                                        onSelect = function()
+                                                            local PlayerData = QBCore.Functions.GetPlayerData()
+                                                            local tableData = {}
+                                            
+                                                            QBCore.Functions.TriggerCallback('getMotels', function(data)
+                                                                local motels = data
+                                            
+                                                                if motels then
+                                                                    for _, motel in pairs(motels) do
+                                                                        if PlayerData.citizenid == motel.citizenid then
+                                                                            tableData[#tableData + 1] = {
+                                                                                title = motel.room,
+                                                                                description = 'Rent ends in: ' .. formatTime(motel.rentedTime),
+                                                                                onSelect = function()
+                                                                                    lib.registerContext({
+                                                                                        id = 'manage_' .. motel.roomid,
+                                                                                        title = 'Manage Hotel Room',
+                                                                                        options = {
+                                                                                            {
+                                                                                                title = 'Duplicate Key',
+                                                                                                description = 'Duplicate your key to give to friends!',
+                                                                                                onSelect = function()
+                                                                                                    TriggerServerEvent('jc-motels:server:duplicateKey', motel.roomid, motel.room)
+                                                                                                end
+                                                                                            },
+                                                                                            {
+                                                                                                title = 'Lost Key',
+                                                                                                description = 'Get a new key for your room!',
+                                                                                                onSelect = function()
+                                                                                                    local PlayerData = QBCore.Functions.GetPlayerData()
+                                                                                                    local items = PlayerData.items
+                                                                                                    local foundMatch = false
+                                                                                                    
+                                                                                                    for _, k in pairs(items) do
+                                                                                                        if k.name == 'motel_key' and k.info.room == motel.roomid then
+                                                                                                            foundMatch = true
+                                                                                                            break
+                                                                                                        end
+                                                                                                    end
+                                            
+                                                                                                    if foundMatch then
+                                                                                                        QBCore.Functions.Notify('What are you talking about?? The key is on you...', 'error', 3000)
+                                                                                                    else
+                                                                                                        TriggerServerEvent('jc-motels:server:lostKeys', motel.roomid, motel.room)
+                                                                                                    end
+                                                                                                end
+                                                                                            },
+                                                                                            {
+                                                                                                title = 'Extend Rent',
+                                                                                                description = 'Pay to rent for another week!',
+                                                                                                onSelect = function()
+                                                                                                    if motel.rentedTime > 84600 then
+                                                                                                        QBCore.Functions.Notify('You can only rent for a week at a time! You can first pay when there\'s 24 hours or less left!', 'error', 3000)
+                                                                                                    else
+                                                                                                        for key, motelRools in pairs(Config.MotelRooms) do
+                                                                                                            for k, m in pairs(motelRooms) do
+                                                                                                                if m.room == motel.roomid then
+                                                                                                                    TriggerServerEvent('jc-motels:server:extendRent', motel.roomid, m.price)
+                                                                                                                    break
+                                                                                                                else
+                                                                                                                    QBCore.Functions.Notify('Something went wrong.. Room not found!', 'error', 3000)
+                                                                                                                end
+                                                                                                            end
+                                                                                                        end
+                                                                                                    end
+                                                                                                end
+                                                                                            },
+                                                                                            {
+                                                                                                title = 'End Rent',
+                                                                                                description = 'Stop renting the motel room!',
+                                                                                                onSelect = function()
+                                                                                                    local PlayerData = QBCore.Functions.GetPlayerData()
+                                                                                                    local items = PlayerData.items
+                                                                                                    local hasKey = false
+                                            
+                                                                                                    for _, item in pairs(items) do
+                                                                                                        if item.info.room == motel.roomid then
+                                                                                                            hasKey = true
+                                                                                                            break
+                                                                                                        end
+                                                                                                    end
+                                                                                                    
+                                                                                                    if hasKey then
+                                                                                                        for key, motelRooms in pairs(Config.MotelRooms) do
+                                                                                                            for k, m in pairs(motelRooms) do
+                                                                                                                if m.room == motel.roomid then
+                                                                                                                    m.renter = nil
+                                                                                                                    TriggerServerEvent('jc-motels:server:cancelRent', motel.roomid, motel.room_name)
+                                                                                                                    break
+                                                                                                                else
+                                                                                                                    QBCore.Functions.Notify('Something went wrong.. Room not found!', 'error', 3000)
+                                                                                                                end
+                                                                                                            end
+                                                                                                        end
+                                                                                                    else
+                                                                                                        QBCore.Functions.Notify('You need your key so you can deliver it!', 'error', 3000)
+                                                                                                    end
+                                                                                                end
+                                                                                            }
+                                                                                        }
+                                                                                    })
+                                                                                    lib.showContext('manage_' .. motel.roomid)
+                                                                                end
+                                                                            }
+                                                                        end
+                                                                    end
+                                            
+                                                                    lib.registerContext({
+                                                                        id = 'rented_rooms',
+                                                                        title = 'Rented Rooms',
+                                                                        options = tableData
+                                                                    })
+                                                                    lib.showContext('rented_rooms')
+                                                                else
+                                                                    QBCore.Functions.Notify('You don\'t have any rented rooms here!', 'error', 3000)
+                                                                end
+                                                            end)
+                                                        end
+                                                    },
+                                                    {
+                                                        title = 'Rent Room',
+                                                        description = 'Rent a room with weekly pay!',
+                                                        onSelect = function()
+                                                            local tableData = {}
+                                                            local boughtRoom = false
+                                                            checkMotels()
+                                                            Wait(100)
+                                            
+                                                            for key, motelRooms in pairs(Config.MotelRooms) do
+                                                                for k, rooms in pairs(motelRooms) do
+                                                                    if i == key and not rooms.renter then
+                                                                        tableData[#tableData + 1] = {
+                                                                            title = rooms.label,
+                                                                            description = 'Price: $' .. rooms.price .. '\n Storage Space: ' .. rooms.slots,
+                                                                            onSelect = function()
+                                                                                if not boughtRoom then
+                                                                                    TriggerServerEvent('jc-motels:server:buyRoom', rooms)
+                                                                                    boughtRoom = true
+                                                                                    Wait(1000)
+                                                                                    boughtRoom = false
+                                                                                end
+                                                                            end
+                                                                        }
+                                                                    end
+                                                                end
+                                                            end
+                                            
+                                                            lib.registerContext({
+                                                                id = 'rent_' .. i .. '_room',
+                                                                title = 'Rent Motel Room',
+                                                                options = tableData
+                                                            })
+                                                            lib.showContext('rent_' .. i .. '_room')
+                                                        end
+                                                    },
+                                                }
+                                            })
+                                            lib.showContext(i)
+                                            hasFound = false
+                                        end
+                                    end
+                                end)
+                            else
+                                lib.registerContext({
+                                    id = i,
+                                    title = motel.label,
+                                    options = {
+                                        {
+                                            title = 'Rented Rooms',
+                                            description = 'Watch your rented rooms!',
+                                            onSelect = function()
+                                                local PlayerData = QBCore.Functions.GetPlayerData()
+                                                local tableData = {}
+                                
+                                                QBCore.Functions.TriggerCallback('getMotels', function(data)
+                                                    local motels = data
+                                
+                                                    if motels then
+                                                        for _, motel in pairs(motels) do
+                                                            if PlayerData.citizenid == motel.citizenid then
+                                                                tableData[#tableData + 1] = {
+                                                                    title = motel.room,
+                                                                    description = 'Rent ends in: ' .. formatTime(motel.rentedTime),
+                                                                    onSelect = function()
+                                                                        lib.registerContext({
+                                                                            id = 'manage_' .. motel.roomid,
+                                                                            title = 'Manage Hotel Room',
+                                                                            options = {
+                                                                                {
+                                                                                    title = 'Duplicate Key',
+                                                                                    description = 'Duplicate your key to give to friends!',
+                                                                                    onSelect = function()
+                                                                                        TriggerServerEvent('jc-motels:server:duplicateKey', motel.roomid, motel.room)
+                                                                                    end
+                                                                                },
+                                                                                {
+                                                                                    title = 'Lost Key',
+                                                                                    description = 'Get a new key for your room!',
+                                                                                    onSelect = function()
+                                                                                        local PlayerData = QBCore.Functions.GetPlayerData()
+                                                                                        local items = PlayerData.items
+                                                                                        local foundMatch = false
+                                                                                        
+                                                                                        for _, k in pairs(items) do
+                                                                                            if k.name == 'motel_key' and k.info.room == motel.roomid then
+                                                                                                foundMatch = true
+                                                                                                break
+                                                                                            end
+                                                                                        end
+                                
+                                                                                        if foundMatch then
+                                                                                            QBCore.Functions.Notify('What are you talking about?? The key is on you...', 'error', 3000)
+                                                                                        else
+                                                                                            TriggerServerEvent('jc-motels:server:lostKeys', motel.roomid, motel.room)
+                                                                                        end
+                                                                                    end
+                                                                                },
+                                                                                {
+                                                                                    title = 'Extend Rent',
+                                                                                    description = 'Pay to rent for another week!',
+                                                                                    onSelect = function()
+                                                                                        if motel.rentedTime > 84600 then
+                                                                                            QBCore.Functions.Notify('You can only rent for a week at a time! You can first pay when there\'s 24 hours or less left!', 'error', 3000)
+                                                                                        else
+                                                                                            for key, motelRools in pairs(Config.MotelRooms) do
+                                                                                                for k, m in pairs(motelRooms) do
+                                                                                                    if m.room == motel.roomid then
+                                                                                                        TriggerServerEvent('jc-motels:server:extendRent', motel.roomid, m.price)
+                                                                                                        break
+                                                                                                    else
+                                                                                                        QBCore.Functions.Notify('Something went wrong.. Room not found!', 'error', 3000)
+                                                                                                    end
+                                                                                                end
+                                                                                            end
+                                                                                        end
+                                                                                    end
+                                                                                },
+                                                                                {
+                                                                                    title = 'End Rent',
+                                                                                    description = 'Stop renting the motel room!',
+                                                                                    onSelect = function()
+                                                                                        local PlayerData = QBCore.Functions.GetPlayerData()
+                                                                                        local items = PlayerData.items
+                                                                                        local hasKey = false
+                                
+                                                                                        for _, item in pairs(items) do
+                                                                                            if item.info.room == motel.roomid then
+                                                                                                hasKey = true
+                                                                                                break
+                                                                                            end
+                                                                                        end
+                                                                                        
+                                                                                        if hasKey then
+                                                                                            for key, motelRooms in pairs(Config.MotelRooms) do
+                                                                                                for k, m in pairs(motelRooms) do
+                                                                                                    if m.room == motel.roomid then
+                                                                                                        m.renter = nil
+                                                                                                        TriggerServerEvent('jc-motels:server:cancelRent', motel.roomid, motel.room_name)
+                                                                                                        break
+                                                                                                    else
+                                                                                                        QBCore.Functions.Notify('Something went wrong.. Room not found!', 'error', 3000)
+                                                                                                    end
+                                                                                                end
+                                                                                            end
+                                                                                        else
+                                                                                            QBCore.Functions.Notify('You need your key so you can deliver it!', 'error', 3000)
+                                                                                        end
+                                                                                    end
+                                                                                }
+                                                                            }
+                                                                        })
+                                                                        lib.showContext('manage_' .. motel.roomid)
+                                                                    end
+                                                                }
+                                                            end
+                                                        end
+                                
+                                                        lib.registerContext({
+                                                            id = 'rented_rooms',
+                                                            title = 'Rented Rooms',
+                                                            options = tableData
+                                                        })
+                                                        lib.showContext('rented_rooms')
+                                                    else
+                                                        QBCore.Functions.Notify('You don\'t have any rented rooms here!', 'error', 3000)
+                                                    end
+                                                end)
+                                            end
+                                        },
+                                        {
+                                            title = 'Rent Room',
+                                            description = 'Rent a room with weekly pay!',
+                                            onSelect = function()
+                                                local tableData = {}
+                                                local boughtRoom = false
+                                                checkMotels()
+                                                Wait(100)
+                                
+                                                for key, motelRooms in pairs(Config.MotelRooms) do
+                                                    for k, rooms in pairs(motelRooms) do
+                                                        if i == key and not rooms.renter then
+                                                            tableData[#tableData + 1] = {
+                                                                title = rooms.label,
+                                                                description = 'Price: $' .. rooms.price .. '\n Storage Space: ' .. rooms.slots,
+                                                                onSelect = function()
+                                                                    if not boughtRoom then
+                                                                        TriggerServerEvent('jc-motels:server:buyRoom', rooms)
+                                                                        boughtRoom = true
+                                                                        Wait(1000)
+                                                                        boughtRoom = false
+                                                                    end
                                                                 end
                                                             }
                                                         end
                                                     end
-
-                                                    lib.registerContext({
-                                                        id = 'rented_rooms',
-                                                        title = 'Rented Rooms',
-                                                        options = tableData
-                                                    })
-                                                    lib.showContext('rented_rooms')
-                                                else
-                                                    QBCore.Functions.Notify('You don\'t have any rented rooms here!', 'error', 3000)
                                                 end
-                                            end)
-                                        end
-                                    },
-                                    {
-                                        title = 'Rent Room',
-                                        description = 'Rent a room with weekly pay!',
-                                        onSelect = function()
-                                            local tableData = {}
-                                            local boughtRoom = false
-                                            checkMotels()
-                                            Wait(100)
-                            
-                                            for key, motelRooms in pairs(Config.MotelRooms) do
-                                                for k, rooms in pairs(motelRooms) do
-                                                    if i == key and not rooms.renter then
-                                                        tableData[#tableData + 1] = {
-                                                            title = rooms.label,
-                                                            description = 'Price: $' .. rooms.price .. '\n Storage Space: ' .. rooms.slots,
-                                                            onSelect = function()
-                                                                if not boughtRoom then
-                                                                    TriggerServerEvent('jc-motels:server:buyRoom', rooms)
-                                                                    boughtRoom = true
-                                                                    Wait(1000)
-                                                                    boughtRoom = false
-                                                                end
-                                                            end
-                                                        }
-                                                    end
-                                                end
+                                
+                                                lib.registerContext({
+                                                    id = 'rent_' .. i .. '_room',
+                                                    title = 'Rent Motel Room',
+                                                    options = tableData
+                                                })
+                                                lib.showContext('rent_' .. i .. '_room')
                                             end
-                            
-                                            lib.registerContext({
-                                                id = 'rent_' .. i .. '_room',
-                                                title = 'Rent Motel Room',
-                                                options = tableData
-                                            })
-                                            lib.showContext('rent_' .. i .. '_room')
-                                        end
+                                        },
                                     }
-                                }
-                            })
-                            lib.showContext(i)
+                                })
+                                lib.showContext(i)
+                            end
                         end
                     }
                 },
