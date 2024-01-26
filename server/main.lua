@@ -3,13 +3,83 @@ local QBCore = exports['qb-core']:GetCoreObject()
 local doorInfo = {}
 local locked = false
 
+QBCore.Functions.CreateCallback('ownedMotels', function(source, cb)
+    local tableData = {}
+    local roomsData = {}
+    local totalPrice = 0
+    MySQL.query('SELECT `motel`, `motel_name`, `owner`, `funds` FROM `jc_ownedmotels`', {}, function(response)
+        if response and #response > 0 then
+            for i = 1, #response do
+                local row = response[i]
+
+                MySQL.query('SELECT `motel`, `room_name`, `renter`, `roomid`, `renter_citizenid`, `rentedTime` FROM `jc_motels`', {}, function(response)
+                    if response and #response > 0 then
+                        for i = 1, #response do
+                            local row2 = response[i]
+                            local foundMatch = false
+
+                            for i, rooms in pairs(Config.MotelRooms) do
+                                if rooms and type(rooms) == "table" then
+                                    for _, room in ipairs(rooms) do
+                                        if room and type(room) == "table" and room.price then
+                                            if row2.motel == i then
+                                                foundMatch = true
+                                                print('test1')
+                                                totalPrice = totalPrice + room.price
+                                                break
+                                            end
+                                        else
+                                            print("Invalid room configuration:", i)
+                                        end
+                                    end
+                                else
+                                    print("Invalid motel configuration:", i)
+                                end
+                        
+                                if foundMatch then
+                                    roomsData = {
+                                        count = #response,
+                                        price = totalPrice,
+                                    }
+                                    foundMatch = false
+                                    break
+                                else
+                                    roomsData = {
+                                        count = 0,
+                                        price = 0,
+                                    }
+                                    break
+                                end
+                            end
+                        end
+                    else
+                        roomsData = {}
+                    end
+                end)
+
+                tableData[#tableData + 1] = {
+                    motel = row.motel,
+                    name = row.motel_name,
+                    owner = row.owner,
+                    funds = row.funds,
+                    rooms = roomsData
+                }
+            end
+            cb(tableData)
+        else
+            cb(false)
+        end
+    end)
+end)
+
 QBCore.Functions.CreateCallback('getMotels', function(source, cb)
     local tableData = {}
-    MySQL.query('SELECT `room_name`, `renter`, `roomid`, `renter_citizenid`, `rentedTime` FROM `motels`', {}, function(response)
+    MySQL.query('SELECT `motel`, `room_name`, `renter`, `roomid`, `renter_citizenid`, `rentedTime` FROM `jc_motels`', {}, function(response)
         if response and #response > 0 then
             for i = 1, #response do
                 local row = response[i]
                 tableData[#tableData + 1] = {
+                    motel = row.motel,
                     room = row.room_name,
                     renter = row.renter,
                     roomid = row.roomid,
@@ -17,7 +87,6 @@ QBCore.Functions.CreateCallback('getMotels', function(source, cb)
                     rentedTime = row.rentedTime,
                 }
             end
-
             cb(tableData)
         else
             cb(false)
@@ -28,9 +97,17 @@ end)
 Citizen.CreateThread(function()
     while true do
         Wait(1000)
-        MySQL.execute('UPDATE `motels` SET `rentedTime` = GREATEST(`rentedTime` - 1, 0) WHERE `rentedTime` > 0', {})
+        
+        MySQL.execute('UPDATE `jc_motels` SET `rentedTime` = GREATEST(`rentedTime` - 1, 0) WHERE `rentedTime` > 0', {})
+        MySQL.execute('DELETE FROM `jc_motels` WHERE `rentedTime` = 0', {})
+        
+        if Config.RentingBills then
+            MySQL.execute('UPDATE `jc_ownedmotels` SET `boughtInterval` = GREATEST(`boughtInterval` - 1, 0) WHERE `boughtInterval` > 0', {})
+            MySQL.execute('DELETE FROM `jc_ownedmotels` WHERE `boughtInterval` = 0', {})
+        end
     end
 end)
+
 
 RegisterCommand('GiveKey', function(source, args, rawCommand)
     local src = source
@@ -69,14 +146,14 @@ AddEventHandler('jc-motels:server:buyRoom', function(room)
 
     if money >= room.price then
 
-        MySQL.query('SELECT `roomid` FROM `motels` WHERE `roomid` = ?', {
+        MySQL.query('SELECT `roomid` FROM `jc_motels` WHERE `roomid` = ?', {
             room.room
         }, function(response)
             if response and #response > 0 then
                 for i = 1, #response do
                     local row = response[i]
 
-                    MySQL.update('UPDATE motels SET renter = ?, renter_citizenid = ?, rentedTime = ? WHERE roomid = ?', {
+                    MySQL.update('UPDATE jc_motels SET renter = ?, renter_citizenid = ?, rentedTime = ? WHERE roomid = ?', {
                         name, citizenid, 604800, room.room
                     }, function(affectedRows)
                         player.Functions.RemoveMoney('cash', room.price)
@@ -90,7 +167,7 @@ AddEventHandler('jc-motels:server:buyRoom', function(room)
                     end)
                 end
             else
-                MySQL.insert('INSERT INTO `motels` (room_name, roomid, renter, renter_citizenid, rentedTime) VALUES (?, ?, ?, ?, ?)', {
+                MySQL.insert('INSERT INTO `jc_motels` (room_name, roomid, renter, renter_citizenid, rentedTime) VALUES (?, ?, ?, ?, ?)', {
                     room.label, room.room, name, citizenid, 604800
                 }, function(id)
                     player.Functions.RemoveMoney('cash', room.price)
@@ -126,7 +203,7 @@ AddEventHandler('jc-motels:server:cancelRent', function(roomid, room)
     local src = source
     local player = QBCore.Functions.GetPlayer(src)
 
-    MySQL.query('DELETE FROM `motels` WHERE `roomid` = ?', {roomid}, function(response) end)
+    MySQL.query('DELETE FROM `jc_motels` WHERE `roomid` = ?', {roomid}, function(response) end)
     QBCore.Functions.Notify(src, 'You have cancelled your rent!')
 
     player.Functions.RemoveItem('motel_key', 1, nil, info)
@@ -219,4 +296,22 @@ AddEventHandler('jc-motels:server:duplicateKey', function(room, label)
     info.room = room
     player.Functions.AddItem('motel_key', 1, nil, info)
     TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['motel_key'], 'add')
+end)
+
+RegisterServerEvent('jc-motels:server:buymotel')
+AddEventHandler('jc-motels:server:buymotel', function(i, motel)
+    local src = source
+    local player = QBCore.Functions.GetPlayer(src)
+    local citizenid = player.PlayerData.citizenid
+    local money = player.PlayerData.money['cash']
+
+    if money >= motel.buyPrice then
+        MySQL.insert('INSERT INTO `jc_ownedmotels` (motel, motel_name, owner, boughtInterval) VALUES (?, ?, ?, ?)', {
+            i, motel.label, citizenid, 604800
+        }, function(id)
+            player.Functions.RemoveMoney('cash', motel.buyPrice)
+        end)
+    else
+        QBCore.Functions.Notify(src, 'You don\'t have enough money to buy this!', 'error', 3000)
+    end
 end)
