@@ -145,26 +145,29 @@ AddEventHandler('jc-motels:server:buyRoom', function(room)
     local money = player.PlayerData.money['cash']
 
     if money >= room.price then
-
         MySQL.query('SELECT `roomid` FROM `jc_motels` WHERE `roomid` = ?', {
             room.room
         }, function(response)
             if response and #response > 0 then
-                for i = 1, #response do
-                    local row = response[i]
-
-                    MySQL.update('UPDATE jc_motels SET renter = ?, renter_citizenid = ?, rentedTime = ? WHERE roomid = ?', {
-                        name, citizenid, 604800, room.room
-                    }, function(affectedRows)
-                        player.Functions.RemoveMoney('cash', room.price)
-
-                        local info = {}
-                        info.label = room.label
-                        info.room = room.room
-                
-                        player.Functions.AddItem('motel_key', 1, nil, info)
-                        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['motel_key'], 'add')
-                    end)
+                if not Config.RoomLimits then
+                    for i = 1, #response do
+                        local row = response[i]
+    
+                        MySQL.update('UPDATE jc_motels SET renter = ?, renter_citizenid = ?, rentedTime = ? WHERE roomid = ?', {
+                            name, citizenid, 604800, room.room
+                        }, function(affectedRows)
+                            player.Functions.RemoveMoney('cash', room.price)
+    
+                            local info = {}
+                            info.label = room.label
+                            info.room = room.room
+                    
+                            player.Functions.AddItem('motel_key', 1, nil, info)
+                            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['motel_key'], 'add')
+                        end)
+                    end
+                else
+                    QBCore.Functions.Notify(src, 'You already own a motel room!', 'error', 3000)
                 end
             else
                 MySQL.insert('INSERT INTO `jc_motels` (room_name, roomid, renter, renter_citizenid, rentedTime) VALUES (?, ?, ?, ?, ?)', {
