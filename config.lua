@@ -4,6 +4,8 @@ Config.RentingBills = true -- Set this to true if you want motel owners to pay t
 Config.UseTarget = true
 Config.Inventory = 'qb' -- Currently support inventory system qb or ox, qb SHOULD also support qs-inventory so if you use qs-inventory write qb!
 
+Config.RoomLimits = true -- Make it limited to only own 1 motel room at a time!
+
 Config.KeyName = 'motel_key' -- The name of the key item you use for the doors!
 
 Config.Motels = {
